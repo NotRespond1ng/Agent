@@ -1,0 +1,89 @@
+{
+  "summary": {
+    "total_agents": 1,
+    "analyzed_agents": 1,
+    "average_cognitive_gap": 0.85,
+    "std_cognitive_gap": 0.0,
+    "max_gap_agent": {
+      "name": "拉托亚",
+      "gap": 0.85
+    },
+    "min_gap_agent": {
+      "name": "拉托亚",
+      "gap": 0.85
+    },
+    "real_world_graph_info": {
+      "total_nodes": 10,
+      "total_edges": 9,
+      "density": 0.2
+    }
+  },
+  "detailed_results": {
+    "拉托亚": {
+      "agent_name": "拉托亚",
+      "cognitive_nodes": 1,
+      "cognitive_edges": 0,
+      "real_nodes": 2,
+      "real_edges": 1,
+      "gap_metrics": {
+        "cognitive_gap": 0.85,
+        "overall_score": 0.15,
+        "node_structure_score": 0.5,
+        "edge_structure_score": 0.0,
+        "semantic_accuracy": 0.0,
+        "temporal_consistency": 0,
+        "detailed_metrics": {
+          "nodes": {
+            "node_count_diff": 1,
+            "jaccard_similarity": 0.5,
+            "missing_nodes_count": 1,
+            "hallucinated_nodes_count": 0,
+            "missing_nodes": [
+              "弗朗西斯科"
+            ],
+            "hallucinated_nodes": [],
+            "cognitive_nodes_count": 1,
+            "real_nodes_count": 2
+          },
+          "edges": {
+            "edge_count_diff": 1,
+            "edge_jaccard_similarity": 0.0,
+            "missing_edges_count": 1,
+            "hallucinated_edges_count": 0,
+            "missing_edges": [
+              [
+                "拉托亚",
+                "弗朗西斯科"
+              ]
+            ],
+            "hallucinated_edges": [],
+            "cognitive_edges_count": 0,
+            "real_edges_count": 1
+          }
+        }
+      },
+      "cognitive_graph_info": {
+        "nodes": [
+          "拉托亚"
+        ],
+        "edges": []
+      },
+      "real_graph_info": {
+        "nodes": [
+          "拉托亚",
+          "弗朗西斯科"
+        ],
+        "edges": [
+          [
+            "拉托亚",
+            "弗朗西斯科",
+            {
+              "weight": 3,
+              "interaction_count": 1
+            }
+          ]
+        ]
+      }
+    }
+  }
+}
