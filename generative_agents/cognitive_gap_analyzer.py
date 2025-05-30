@@ -505,7 +505,8 @@ def load_agent_from_storage(agent_name: str, storage_path: str, config: Dict = N
                 }),
                 "schedule": {
                     "daily_schedule": [],
-                    "hourly_schedule": []
+                    "diversity": 5,
+                    "max_try": 5
                 },
                 "associate": {"embedding_model": "text-embedding-ada-002"},
                 "currently": agent_config.get("currently", f"{agent_name}正在思考"),
