@@ -514,7 +514,10 @@ def load_agent_from_storage(agent_name: str, storage_path: str, config: Dict = N
                     "max_try": 5
                 },
                 "associate": {
-                    "embedding": "text-embedding-ada-002",
+                    "embedding": {
+                        "type": "openai",
+                        "model": "text-embedding-v3"
+                    },
                     "retention": 8,
                     "max_memory": -1,
                     "max_importance": 10
