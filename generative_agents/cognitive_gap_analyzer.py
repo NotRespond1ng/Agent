@@ -535,7 +535,33 @@ def load_agent_from_storage(agent_name: str, storage_path: str, config: Dict = N
             }
         
         # 创建虚拟的maze和conversation对象
+        class DummyTile:
+            def __init__(self, coord):
+                self.coord = coord
+                self.address = ["世界", "房间", "客厅", "物品"]
+                self.address_keys = ["world", "sector", "arena", "game_object"]
+                self.address_map = dict(zip(self.address_keys, self.address))
+                
+            def get_address(self, level=None, as_list=True):
+                level = level or self.address_keys[-1]
+                pos = self.address_keys.index(level) + 1
+                if as_list:
+                    return self.address[:pos]
+                return ":".join(self.address[:pos])
+                
+            def abstract(self):
+                return {"coord[{},{}]".format(self.coord[0], self.coord[1]): ":".join(self.address)}
+        
         class DummyMaze:
+            def __init__(self):
+                self.tiles = {}
+                
+            def tile_at(self, coord):
+                coord_key = (coord[0], coord[1])
+                if coord_key not in self.tiles:
+                    self.tiles[coord_key] = DummyTile(coord)
+                return self.tiles[coord_key]
+                
             def get_address_tiles(self, address):
                 return [(0, 0)]
         
