@@ -15,7 +15,7 @@ import os
 import re
 from collections import defaultdict
 from typing import Dict, List, Set, Tuple, Any, Optional
-
+import traceback
 import networkx as nx
 import numpy as np
 from pathlib import Path
@@ -547,6 +547,7 @@ def load_agent_from_storage(agent_name: str, storage_path: str, config: Dict = N
         return agent
     except Exception as e:
         print(f"加载agent {agent_name} 失败: {e}")
+        print(traceback.format_exc()) # 打印完整的堆栈跟踪
         return None
 
 
