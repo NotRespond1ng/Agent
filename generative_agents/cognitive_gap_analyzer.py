@@ -485,8 +485,14 @@ def load_agent_from_storage(agent_name: str, storage_path: str, config: Dict = N
                 "percept": {"vision_r": 3, "att_bandwidth": 3},
                 "think": {"interval": 10},
                 "chat_iter": 3,
-                "spatial": {},
-                "schedule": {},
+                "spatial": {
+                    "tree": {"世界": {"房间": ["客厅", "卧室"]}},
+                    "address": {"living_area": ["世界", "房间", "客厅"]}
+                },
+                "schedule": {
+                    "daily_schedule": [],
+                    "hourly_schedule": []
+                },
                 "associate": {"embedding_model": "text-embedding-ada-002"},
                 "currently": f"{agent_name}正在思考",
                 "scratch": {}
