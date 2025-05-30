@@ -477,25 +477,40 @@ def load_agent_from_storage(agent_name: str, storage_path: str, config: Dict = N
         from modules.agent import Agent
         from modules import memory
         
-        # 默认配置
+        # 从agent.json文件读取配置
         if config is None:
+            agent_config_path = f"frontend/static/assets/village/agents/{agent_name}/agent.json"
+            
+            if not os.path.exists(agent_config_path):
+                print(f"找不到agent配置文件: {agent_config_path}")
+                return None
+            
+            try:
+                with open(agent_config_path, 'r', encoding='utf-8') as f:
+                    agent_config = json.load(f)
+            except Exception as e:
+                print(f"读取agent配置文件失败: {e}")
+                return None
+            
+            # 构建完整的配置
             config = {
-                "name": agent_name,
+                "name": agent_config.get("name", agent_name),
                 "storage_root": storage_path,
                 "percept": {"vision_r": 3, "att_bandwidth": 3},
                 "think": {"interval": 10},
                 "chat_iter": 3,
-                "spatial": {
+                "spatial": agent_config.get("spatial", {
                     "tree": {"世界": {"房间": ["客厅", "卧室"]}},
                     "address": {"living_area": ["世界", "房间", "客厅"]}
-                },
+                }),
                 "schedule": {
                     "daily_schedule": [],
                     "hourly_schedule": []
                 },
                 "associate": {"embedding_model": "text-embedding-ada-002"},
-                "currently": f"{agent_name}正在思考",
-                "scratch": {}
+                "currently": agent_config.get("currently", f"{agent_name}正在思考"),
+                "scratch": agent_config.get("scratch", {}),
+                "coord": agent_config.get("coord", [0, 0])
             }
         
         # 创建虚拟的maze和conversation对象
