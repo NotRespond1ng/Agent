@@ -543,30 +543,61 @@ def load_agent_from_storage(agent_name: str, storage_path: str, config: Dict = N
                 self.address_map = dict(zip(self.address_keys, self.address))
                 self._events = {}
                 self.event_cnt = 0
+                self.collision = False
                 
             def get_address(self, level=None, as_list=True):
                 level = level or self.address_keys[-1]
+                if level not in self.address_keys:
+                    return self.address if as_list else ":".join(self.address)
                 pos = self.address_keys.index(level) + 1
                 if as_list:
                     return self.address[:pos]
                 return ":".join(self.address[:pos])
                 
+            def get_addresses(self):
+                addresses = []
+                if len(self.address) > 1:
+                    addresses = [
+                        ":".join(self.address[:i]) for i in range(2, len(self.address) + 1)
+                    ]
+                return addresses
+                
             def abstract(self):
-                return {"coord[{},{}]".format(self.coord[0], self.coord[1]): ":".join(self.address)}
+                address = ":".join(self.address)
+                if self.collision:
+                    address += "(collision)"
+                return {
+                    "coord[{},{}]".format(self.coord[0], self.coord[1]): address,
+                    "events": {k: str(v) for k, v in self.events.items()},
+                }
+                
+            def get_events(self):
+                return self.events.values()
                 
             def update_events(self, event, match="subject"):
-                # 简单的虚拟实现，返回空字典
-                return {}
+                u_events = {}
+                for tag, eve in self._events.items():
+                    if match == "subject" and hasattr(eve, 'subject') and hasattr(event, 'subject') and eve.subject == event.subject:
+                        self._events[tag] = event
+                        u_events[tag] = event
+                return u_events
                 
             def add_event(self, event):
-                # 简单的虚拟实现
-                self._events["e_" + str(self.event_cnt)] = event
-                self.event_cnt += 1
+                if all(e != event for e in self._events.values()):
+                    self._events["e_" + str(self.event_cnt)] = event
+                    self.event_cnt += 1
                 return event
                 
             def remove_events(self, subject=None, event=None):
-                # 简单的虚拟实现
-                return {}
+                r_events = {}
+                for tag, eve in self._events.items():
+                    if subject and hasattr(eve, 'subject') and eve.subject == subject:
+                        r_events[tag] = eve
+                    if event and eve == event:
+                        r_events[tag] = eve
+                for r_eve in r_events:
+                    self._events.pop(r_eve)
+                return r_events
                 
             def has_address(self, key):
                 return key in self.address_map
@@ -574,10 +605,17 @@ def load_agent_from_storage(agent_name: str, storage_path: str, config: Dict = N
             @property
             def events(self):
                 return self._events
+                
+            @property
+            def is_empty(self):
+                return len(self.address) == 1 and not self._events
         
         class DummyMaze:
             def __init__(self):
                 self.tiles = {}
+                self.maze_width = 10
+                self.maze_height = 10
+                self.address_tiles = {}
                 
             def tile_at(self, coord):
                 coord_key = (coord[0], coord[1])
@@ -586,7 +624,33 @@ def load_agent_from_storage(agent_name: str, storage_path: str, config: Dict = N
                 return self.tiles[coord_key]
                 
             def get_address_tiles(self, address):
-                return [(0, 0)]
+                addr = ":".join(address) if isinstance(address, list) else address
+                if addr in self.address_tiles:
+                    return self.address_tiles[addr]
+                return {(0, 0)}
+                
+            def find_path(self, src_coord, dst_coord):
+                # 简单的路径查找实现
+                return [dst_coord]
+                
+            def get_scope(self, coord, config):
+                # 返回当前位置的tile
+                return [self.tile_at(coord)]
+                
+            def get_around(self, coord, no_collision=True):
+                coords = [
+                    (coord[0] - 1, coord[1]),
+                    (coord[0] + 1, coord[1]),
+                    (coord[0], coord[1] - 1),
+                    (coord[0], coord[1] + 1),
+                ]
+                if no_collision:
+                    coords = [c for c in coords if not self.tile_at(c).collision]
+                return coords
+                
+            def update_obj(self, coord, obj_event):
+                # 简单的虚拟实现
+                pass
         
         class DummyConversation:
             pass
