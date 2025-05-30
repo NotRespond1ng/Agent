@@ -541,6 +541,8 @@ def load_agent_from_storage(agent_name: str, storage_path: str, config: Dict = N
                 self.address = ["世界", "房间", "客厅", "物品"]
                 self.address_keys = ["world", "sector", "arena", "game_object"]
                 self.address_map = dict(zip(self.address_keys, self.address))
+                self._events = {}
+                self.event_cnt = 0
                 
             def get_address(self, level=None, as_list=True):
                 level = level or self.address_keys[-1]
@@ -551,6 +553,27 @@ def load_agent_from_storage(agent_name: str, storage_path: str, config: Dict = N
                 
             def abstract(self):
                 return {"coord[{},{}]".format(self.coord[0], self.coord[1]): ":".join(self.address)}
+                
+            def update_events(self, event, match="subject"):
+                # 简单的虚拟实现，返回空字典
+                return {}
+                
+            def add_event(self, event):
+                # 简单的虚拟实现
+                self._events["e_" + str(self.event_cnt)] = event
+                self.event_cnt += 1
+                return event
+                
+            def remove_events(self, subject=None, event=None):
+                # 简单的虚拟实现
+                return {}
+                
+            def has_address(self, key):
+                return key in self.address_map
+                
+            @property
+            def events(self):
+                return self._events
         
         class DummyMaze:
             def __init__(self):
