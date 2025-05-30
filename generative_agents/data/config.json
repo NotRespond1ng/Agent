@@ -12,9 +12,9 @@
         "think": {
             "mode": "llm",
             "llm": {
-                "base_url": "http://127.0.0.1:11434/v1",
-                "model": "qwen2.5:7b-instruct-q4_K_M",
-                "embedding_model": "bge-m3:latest"
+                "base_url": "https://yunwu.ai/v1",
+                "model": "gpt-4o-mini",
+                "embedding_model": "text-embedding-3-small"
             },
             "interval": 1000,
             "poignancy_max": 150
@@ -22,15 +22,15 @@
         "chat_iter": 4,
         "associate": {
             "embedding": {
-                "type": "ollama",
-                "base_url": "http://127.0.0.1:11434",
-                "model": "bge-m3:latest"
+                "type": "openai",
+                "base_url": "https://yunwu.ai/v1",
+                "model": "text-embedding-3-small"
             },
             "retention": 8
         }
     },
     "api_keys": {
-        "OPENAI_API_KEY": "",
+        "OPENAI_API_KEY": "sk-Vlr3Ie1XffJP1hFyPYH9op021Oa6y0tbRgU6HOIdpkUkFTJm",
         "QIANFAN_AK": "",
         "QIANFAN_SK": "",
         "SPARK_APPID": "",

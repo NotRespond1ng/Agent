@@ -1,0 +1,2596 @@
+{
+  "stride": 10,
+  "time": "20250411-01:10",
+  "maze": {
+    "path": "assets/village/maze.json"
+  },
+  "agent_base": {
+    "percept": {
+      "mode": "box",
+      "vision_r": 8,
+      "att_bandwidth": 8
+    },
+    "schedule": {
+      "max_try": 5,
+      "diversity": 5
+    },
+    "think": {
+      "mode": "llm",
+      "llm": {
+        "base_url": "http://127.0.0.1:11434/v1",
+        "model": "qwen2.5:14b-instruct-q8_0",
+        "embedding_model": "bge-m3:latest"
+      },
+      "interval": 1000,
+      "poignancy_max": 150
+    },
+    "chat_iter": 4,
+    "associate": {
+      "embedding": {
+        "type": "ollama",
+        "base_url": "http://127.0.0.1:11434",
+        "model": "bge-m3:latest"
+      },
+      "retention": 8
+    }
+  },
+  "agents": {
+    "梅": {
+      "config_path": "assets/village/agents/梅/agent.json",
+      "status": {
+        "poignancy": 0
+      },
+      "schedule": {
+        "create": "20250411-01:00:00",
+        "daily_schedule": [
+          {
+            "idx": 0,
+            "describe": "睡觉",
+            "start": 0,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 1,
+            "describe": "睡觉",
+            "start": 60,
+            "duration": 60,
+            "decompose": [
+              {
+                "idx": 0,
+                "describe": "睡眠",
+                "start": 60,
+                "duration": 5
+              },
+              {
+                "idx": 1,
+                "describe": "睡眠",
+                "start": 65,
+                "duration": 5
+              },
+              {
+                "idx": 2,
+                "describe": "睡眠",
+                "start": 70,
+                "duration": 5
+              },
+              {
+                "idx": 3,
+                "describe": "睡眠",
+                "start": 75,
+                "duration": 5
+              },
+              {
+                "idx": 4,
+                "describe": "睡眠",
+                "start": 80,
+                "duration": 5
+              },
+              {
+                "idx": 5,
+                "describe": "睡眠",
+                "start": 85,
+                "duration": 5
+              },
+              {
+                "idx": 6,
+                "describe": "睡眠",
+                "start": 90,
+                "duration": 5
+              },
+              {
+                "idx": 7,
+                "describe": "睡眠",
+                "start": 95,
+                "duration": 5
+              },
+              {
+                "idx": 8,
+                "describe": "睡眠",
+                "start": 100,
+                "duration": 5
+              },
+              {
+                "idx": 9,
+                "describe": "睡眠",
+                "start": 105,
+                "duration": 5
+              },
+              {
+                "idx": 10,
+                "describe": "睡眠",
+                "start": 110,
+                "duration": 5
+              },
+              {
+                "idx": 11,
+                "describe": "睡眠",
+                "start": 115,
+                "duration": 5
+              }
+            ]
+          },
+          {
+            "idx": 2,
+            "describe": "睡觉",
+            "start": 120,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 3,
+            "describe": "睡觉",
+            "start": 180,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 4,
+            "describe": "睡觉",
+            "start": 240,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 5,
+            "describe": "睡觉",
+            "start": 300,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 6,
+            "describe": "睡觉",
+            "start": 360,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 7,
+            "describe": "起床",
+            "start": 420,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 8,
+            "describe": "准备早餐",
+            "start": 480,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 9,
+            "describe": "帮助孩子做功课",
+            "start": 540,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 10,
+            "describe": "去奥克山学院教书",
+            "start": 600,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 11,
+            "describe": "教授课程",
+            "start": 660,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 12,
+            "describe": "教授课程",
+            "start": 720,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 13,
+            "describe": "教授课程",
+            "start": 780,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 14,
+            "describe": "结束课程，回家",
+            "start": 840,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 15,
+            "describe": "继续工作或休息",
+            "start": 900,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 16,
+            "describe": "帮助孩子做功课",
+            "start": 960,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 17,
+            "describe": "吃晚饭",
+            "start": 1020,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 18,
+            "describe": "家庭时间/准备晚餐",
+            "start": 1080,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 19,
+            "describe": "撰写研究论文",
+            "start": 1140,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 20,
+            "describe": "撰写研究论文",
+            "start": 1200,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 21,
+            "describe": "阅读或休息",
+            "start": 1260,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 22,
+            "describe": "准备睡觉",
+            "start": 1320,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 23,
+            "describe": "睡觉",
+            "start": 1380,
+            "duration": 60,
+            "decompose": {}
+          }
+        ]
+      },
+      "associate": {
+        "memory": {
+          "event": [],
+          "thought": [
+            "node_0"
+          ],
+          "chat": []
+        }
+      },
+      "chats": [],
+      "currently": "梅与丈夫约翰和儿子埃迪住在一起，她正在教授哲学课程并撰写研究论文。她还帮助她的两个孩子做功课。",
+      "action": {
+        "event": {
+          "subject": "梅",
+          "predicate": "正在",
+          "object": "睡觉",
+          "describe": "",
+          "address": [
+            "the Ville",
+            "林氏家族的房子",
+            "梅和约翰的卧室",
+            "床"
+          ],
+          "emoji": "😴"
+        },
+        "obj_event": {
+          "subject": "床",
+          "predicate": "被占用",
+          "object": "梅",
+          "describe": "",
+          "address": [
+            "the Ville",
+            "林氏家族的房子",
+            "梅和约翰的卧室",
+            "床"
+          ],
+          "emoji": "🛌"
+        },
+        "start": "20250411-01:00:00",
+        "duration": 60
+      },
+      "coord": [
+        90,
+        74
+      ]
+    },
+    "约翰": {
+      "config_path": "assets/village/agents/约翰/agent.json",
+      "status": {
+        "poignancy": 0
+      },
+      "schedule": {
+        "create": "20250411-01:00:00",
+        "daily_schedule": [
+          {
+            "idx": 0,
+            "describe": "睡觉",
+            "start": 0,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 1,
+            "describe": "睡觉",
+            "start": 60,
+            "duration": 60,
+            "decompose": [
+              {
+                "idx": 0,
+                "describe": "深度睡眠",
+                "start": 60,
+                "duration": 5
+              },
+              {
+                "idx": 1,
+                "describe": "梦见药店的日常运营",
+                "start": 65,
+                "duration": 5
+              },
+              {
+                "idx": 2,
+                "describe": "轻微翻身调整睡姿",
+                "start": 70,
+                "duration": 5
+              },
+              {
+                "idx": 3,
+                "describe": "继续深度睡眠",
+                "start": 75,
+                "duration": 5
+              },
+              {
+                "idx": 4,
+                "describe": "梦见与客户交流的情景",
+                "start": 80,
+                "duration": 5
+              },
+              {
+                "idx": 5,
+                "describe": "调整呼吸频率进入更深层次的休息状态",
+                "start": 85,
+                "duration": 5
+              },
+              {
+                "idx": 6,
+                "describe": "继续深度睡眠",
+                "start": 90,
+                "duration": 5
+              },
+              {
+                "idx": 7,
+                "describe": "梦见儿子埃迪的成长瞬间",
+                "start": 95,
+                "duration": 5
+              },
+              {
+                "idx": 8,
+                "describe": "轻微翻身调整睡姿",
+                "start": 100,
+                "duration": 5
+              },
+              {
+                "idx": 9,
+                "describe": "继续深度睡眠",
+                "start": 105,
+                "duration": 5
+              },
+              {
+                "idx": 10,
+                "describe": "梦见参加在线课程的情景",
+                "start": 110,
+                "duration": 5
+              },
+              {
+                "idx": 11,
+                "describe": "调整呼吸频率进入更深层次的休息状态",
+                "start": 115,
+                "duration": 5
+              }
+            ]
+          },
+          {
+            "idx": 2,
+            "describe": "睡觉",
+            "start": 120,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 3,
+            "describe": "睡觉",
+            "start": 180,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 4,
+            "describe": "睡觉",
+            "start": 240,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 5,
+            "describe": "睡觉",
+            "start": 300,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 6,
+            "describe": "起床",
+            "start": 360,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 7,
+            "describe": "吃早餐",
+            "start": 420,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 8,
+            "describe": "准备上班，与家人交流",
+            "start": 480,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 9,
+            "describe": "去柳树市场和药店开放药店柜台",
+            "start": 540,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 10,
+            "describe": "在药店柜台工作",
+            "start": 600,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 11,
+            "describe": "在药店柜台工作",
+            "start": 660,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 12,
+            "describe": "吃午饭",
+            "start": 720,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 13,
+            "describe": "继续在药店柜台工作",
+            "start": 780,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 14,
+            "describe": "在药店柜台工作",
+            "start": 840,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 15,
+            "describe": "在药店柜台工作",
+            "start": 900,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 16,
+            "describe": "准备关门，整理药品和账目",
+            "start": 960,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 17,
+            "describe": "关门回家",
+            "start": 1020,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 18,
+            "describe": "吃晚饭",
+            "start": 1080,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 19,
+            "describe": "与家人交流或休息",
+            "start": 1140,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 20,
+            "describe": "看电视或参与在线课程学习最新的药物和治疗方法",
+            "start": 1200,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 21,
+            "describe": "继续在线课程或放松",
+            "start": 1260,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 22,
+            "describe": "准备睡觉，回顾一天的工作",
+            "start": 1320,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 23,
+            "describe": "睡觉",
+            "start": 1380,
+            "duration": 60,
+            "decompose": {}
+          }
+        ]
+      },
+      "associate": {
+        "memory": {
+          "event": [],
+          "thought": [
+            "node_0"
+          ],
+          "chat": []
+        }
+      },
+      "chats": [],
+      "currently": "约翰与妻子梅和儿子埃迪住在一起，在柳树市场和药店开了一家药店。他还参加了在线课程，以了解最新的药物和治疗方法。约翰也很好奇谁将参加下个月的地方市长选举，他向每个人询问谁将参加选举。",
+      "action": {
+        "event": {
+          "subject": "约翰",
+          "predicate": "正在",
+          "object": "睡觉",
+          "describe": "",
+          "address": [
+            "the Ville",
+            "林氏家族的房子",
+            "梅和约翰的卧室",
+            "床"
+          ],
+          "emoji": "😴"
+        },
+        "obj_event": {
+          "subject": "床",
+          "predicate": "被占用",
+          "object": "约翰",
+          "describe": "",
+          "address": [
+            "the Ville",
+            "林氏家族的房子",
+            "梅和约翰的卧室",
+            "床"
+          ],
+          "emoji": "🛌"
+        },
+        "start": "20250411-01:00:00",
+        "duration": 60
+      },
+      "coord": [
+        91,
+        74
+      ]
+    },
+    "埃迪": {
+      "config_path": "assets/village/agents/埃迪/agent.json",
+      "status": {
+        "poignancy": 0
+      },
+      "schedule": {
+        "create": "20250411-01:00:00",
+        "daily_schedule": [
+          {
+            "idx": 0,
+            "describe": "睡觉",
+            "start": 0,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 1,
+            "describe": "睡觉",
+            "start": 60,
+            "duration": 60,
+            "decompose": [
+              {
+                "idx": 0,
+                "describe": "睡前放松",
+                "start": 60,
+                "duration": 5
+              },
+              {
+                "idx": 1,
+                "describe": "深度睡眠阶段一",
+                "start": 65,
+                "duration": 10
+              },
+              {
+                "idx": 2,
+                "describe": "梦境周期",
+                "start": 75,
+                "duration": 5
+              },
+              {
+                "idx": 3,
+                "describe": "深度睡眠阶段二",
+                "start": 80,
+                "duration": 10
+              },
+              {
+                "idx": 4,
+                "describe": "轻度睡眠阶段一",
+                "start": 90,
+                "duration": 5
+              },
+              {
+                "idx": 5,
+                "describe": "睡眠周期转换",
+                "start": 95,
+                "duration": 5
+              },
+              {
+                "idx": 6,
+                "describe": "梦境周期二",
+                "start": 100,
+                "duration": 10
+              },
+              {
+                "idx": 7,
+                "describe": "轻度睡眠阶段二",
+                "start": 110,
+                "duration": 5
+              },
+              {
+                "idx": 8,
+                "describe": "睡眠恢复期",
+                "start": 115,
+                "duration": 5
+              }
+            ]
+          },
+          {
+            "idx": 2,
+            "describe": "睡觉",
+            "start": 120,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 3,
+            "describe": "睡觉",
+            "start": 180,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 4,
+            "describe": "睡觉",
+            "start": 240,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 5,
+            "describe": "睡觉",
+            "start": 300,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 6,
+            "describe": "睡觉",
+            "start": 360,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 7,
+            "describe": "起床",
+            "start": 420,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 8,
+            "describe": "准备早餐",
+            "start": 480,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 9,
+            "describe": "出门前往奥克山学院",
+            "start": 540,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 10,
+            "describe": "上音乐理论课",
+            "start": 600,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 11,
+            "describe": "继续上课或准备下节课",
+            "start": 660,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 12,
+            "describe": "回家休息并吃午饭",
+            "start": 720,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 13,
+            "describe": "休息和午休",
+            "start": 780,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 14,
+            "describe": "开始做音乐合成项目",
+            "start": 840,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 15,
+            "describe": "继续进行音乐合成项目",
+            "start": 900,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 16,
+            "describe": "继续进行音乐合成项目",
+            "start": 960,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 17,
+            "describe": "准备去霍布斯咖啡馆",
+            "start": 1020,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 18,
+            "describe": "在霍布斯咖啡馆吃饭和学习",
+            "start": 1080,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 19,
+            "describe": "返回家中，继续完成音乐合成项目的相关工作",
+            "start": 1140,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 20,
+            "describe": "继续进行音乐合成项目的工作",
+            "start": 1200,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 21,
+            "describe": "完成一天的学习任务并准备睡觉",
+            "start": 1260,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 22,
+            "describe": "准备睡觉",
+            "start": 1320,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 23,
+            "describe": "睡觉",
+            "start": 1380,
+            "duration": 60,
+            "decompose": {}
+          }
+        ]
+      },
+      "associate": {
+        "memory": {
+          "event": [],
+          "thought": [
+            "node_0"
+          ],
+          "chat": []
+        }
+      },
+      "chats": [],
+      "currently": "埃迪正在为他的大学班级做音乐合成项目。他也在上课，学习更多的音乐理论。",
+      "action": {
+        "event": {
+          "subject": "埃迪",
+          "predicate": "正在",
+          "object": "睡觉",
+          "describe": "",
+          "address": [
+            "the Ville",
+            "林氏家族的房子",
+            "埃迪的卧室",
+            "床"
+          ],
+          "emoji": "😴"
+        },
+        "obj_event": {
+          "subject": "床",
+          "predicate": "被占用",
+          "object": "埃迪",
+          "describe": "",
+          "address": [
+            "the Ville",
+            "林氏家族的房子",
+            "埃迪的卧室",
+            "床"
+          ],
+          "emoji": "🛌"
+        },
+        "start": "20250411-01:00:00",
+        "duration": 60
+      },
+      "coord": [
+        93,
+        74
+      ]
+    },
+    "阿比盖尔": {
+      "config_path": "assets/village/agents/阿比盖尔/agent.json",
+      "status": {
+        "poignancy": 0
+      },
+      "schedule": {
+        "create": "20250411-01:00:00",
+        "daily_schedule": [
+          {
+            "idx": 0,
+            "describe": "睡觉",
+            "start": 0,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 1,
+            "describe": "睡觉",
+            "start": 60,
+            "duration": 60,
+            "decompose": [
+              {
+                "idx": 0,
+                "describe": "睡前放松，冥想",
+                "start": 60,
+                "duration": 5
+              },
+              {
+                "idx": 1,
+                "describe": "深度睡眠阶段一",
+                "start": 65,
+                "duration": 10
+              },
+              {
+                "idx": 2,
+                "describe": "梦境阶段",
+                "start": 75,
+                "duration": 5
+              },
+              {
+                "idx": 3,
+                "describe": "深度睡眠阶段二",
+                "start": 80,
+                "duration": 10
+              },
+              {
+                "idx": 4,
+                "describe": "轻度睡眠阶段一",
+                "start": 90,
+                "duration": 5
+              },
+              {
+                "idx": 5,
+                "describe": "睡眠周期转换",
+                "start": 95,
+                "duration": 5
+              },
+              {
+                "idx": 6,
+                "describe": "梦境阶段二",
+                "start": 100,
+                "duration": 10
+              },
+              {
+                "idx": 7,
+                "describe": "轻度睡眠阶段二",
+                "start": 110,
+                "duration": 5
+              },
+              {
+                "idx": 8,
+                "describe": "睡眠周期转换",
+                "start": 115,
+                "duration": 5
+              }
+            ]
+          },
+          {
+            "idx": 2,
+            "describe": "睡觉",
+            "start": 120,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 3,
+            "describe": "睡觉",
+            "start": 180,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 4,
+            "describe": "睡觉",
+            "start": 240,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 5,
+            "describe": "睡觉",
+            "start": 300,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 6,
+            "describe": "睡觉",
+            "start": 360,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 7,
+            "describe": "睡觉",
+            "start": 420,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 8,
+            "describe": "起床，准备开始新的一天",
+            "start": 480,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 9,
+            "describe": "为客户动画项目工作",
+            "start": 540,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 10,
+            "describe": "继续为客户动画项目工作",
+            "start": 600,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 11,
+            "describe": "继续为客户动画项目工作",
+            "start": 660,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 12,
+            "describe": "吃午饭",
+            "start": 720,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 13,
+            "describe": "继续为客户动画项目工作",
+            "start": 780,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 14,
+            "describe": "继续为客户动画项目工作",
+            "start": 840,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 15,
+            "describe": "短暂休息，散步或做一些伸展运动",
+            "start": 900,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 16,
+            "describe": "尝试新的艺术工具和技术",
+            "start": 960,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 17,
+            "describe": "准备晚饭",
+            "start": 1020,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 18,
+            "describe": "吃晚饭",
+            "start": 1080,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 19,
+            "describe": "继续为客户动画项目工作并探索新方法",
+            "start": 1140,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 20,
+            "describe": "继续为客户动画项目工作并探索新方法",
+            "start": 1200,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 21,
+            "describe": "继续为客户动画项目工作并探索新方法",
+            "start": 1260,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 22,
+            "describe": "放松，准备睡觉",
+            "start": 1320,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 23,
+            "describe": "睡觉",
+            "start": 1380,
+            "duration": 60,
+            "decompose": {}
+          }
+        ]
+      },
+      "associate": {
+        "memory": {
+          "event": [],
+          "thought": [
+            "node_0"
+          ],
+          "chat": []
+        }
+      },
+      "chats": [],
+      "currently": "阿比盖尔正在为客户做一个动画项目。她也在尝试不同的工具和技术来创造互动艺术。",
+      "action": {
+        "event": {
+          "subject": "阿比盖尔",
+          "predicate": "正在",
+          "object": "睡觉",
+          "describe": "",
+          "address": [
+            "the Ville",
+            "艺术家共居空间",
+            "阿比盖尔的房间",
+            "床"
+          ],
+          "emoji": "😴"
+        },
+        "obj_event": {
+          "subject": "床",
+          "predicate": "被占用",
+          "object": "阿比盖尔",
+          "describe": "",
+          "address": [
+            "the Ville",
+            "艺术家共居空间",
+            "阿比盖尔的房间",
+            "床"
+          ],
+          "emoji": "🛌"
+        },
+        "start": "20250411-01:00:00",
+        "duration": 60
+      },
+      "coord": [
+        36,
+        18
+      ]
+    },
+    "卡洛斯": {
+      "config_path": "assets/village/agents/卡洛斯/agent.json",
+      "status": {
+        "poignancy": 0
+      },
+      "schedule": {
+        "create": "20250411-01:00:00",
+        "daily_schedule": [
+          {
+            "idx": 0,
+            "describe": "睡觉",
+            "start": 0,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 1,
+            "describe": "睡觉",
+            "start": 60,
+            "duration": 60,
+            "decompose": [
+              {
+                "idx": 0,
+                "describe": "睡前放松",
+                "start": 60,
+                "duration": 5
+              },
+              {
+                "idx": 1,
+                "describe": "深呼吸冥想",
+                "start": 65,
+                "duration": 5
+              },
+              {
+                "idx": 2,
+                "describe": "轻微翻身调整睡姿",
+                "start": 70,
+                "duration": 5
+              },
+              {
+                "idx": 3,
+                "describe": "逐渐进入浅睡眠状态",
+                "start": 75,
+                "duration": 10
+              },
+              {
+                "idx": 4,
+                "describe": "继续保持浅睡眠",
+                "start": 85,
+                "duration": 10
+              },
+              {
+                "idx": 5,
+                "describe": "进入更深的睡眠阶段",
+                "start": 95,
+                "duration": 10
+              },
+              {
+                "idx": 6,
+                "describe": "保持深度睡眠状态",
+                "start": 105,
+                "duration": 10
+              },
+              {
+                "idx": 7,
+                "describe": "继续深度睡眠",
+                "start": 115,
+                "duration": 5
+              }
+            ]
+          },
+          {
+            "idx": 2,
+            "describe": "睡觉",
+            "start": 120,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 3,
+            "describe": "睡觉",
+            "start": 180,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 4,
+            "describe": "睡觉",
+            "start": 240,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 5,
+            "describe": "睡觉",
+            "start": 300,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 6,
+            "describe": "睡觉",
+            "start": 360,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 7,
+            "describe": "起床",
+            "start": 420,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 8,
+            "describe": "吃早餐",
+            "start": 480,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 9,
+            "describe": "写诗集，探索自然世界的美",
+            "start": 540,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 10,
+            "describe": "继续写诗集",
+            "start": 600,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 11,
+            "describe": "编辑诗集",
+            "start": 660,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 12,
+            "describe": "吃午饭",
+            "start": 720,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 13,
+            "describe": "继续写作和编辑诗集",
+            "start": 780,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 14,
+            "describe": "继续写作和编辑诗集",
+            "start": 840,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 15,
+            "describe": "参加创意写作研讨会",
+            "start": 900,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 16,
+            "describe": "参加创意写作研讨会",
+            "start": 960,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 17,
+            "describe": "吃晚饭",
+            "start": 1020,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 18,
+            "describe": "休息，准备第二天的工作",
+            "start": 1080,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 19,
+            "describe": "休息，准备第二天的工作",
+            "start": 1140,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 20,
+            "describe": "休息，准备第二天的工作",
+            "start": 1200,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 21,
+            "describe": "准备睡觉",
+            "start": 1260,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 22,
+            "describe": "上床睡觉",
+            "start": 1320,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 23,
+            "describe": "睡觉",
+            "start": 1380,
+            "duration": 60,
+            "decompose": {}
+          }
+        ]
+      },
+      "associate": {
+        "memory": {
+          "event": [],
+          "thought": [
+            "node_0"
+          ],
+          "chat": []
+        }
+      },
+      "chats": [],
+      "currently": "卡洛斯正在写一本诗集，探索自然世界的美。他还参加创意写作研讨会来磨练自己的技能。",
+      "action": {
+        "event": {
+          "subject": "卡洛斯",
+          "predicate": "正在",
+          "object": "睡觉",
+          "describe": "",
+          "address": [
+            "the Ville",
+            "卡洛斯的公寓",
+            "主人房",
+            "床"
+          ],
+          "emoji": "😴"
+        },
+        "obj_event": {
+          "subject": "床",
+          "predicate": "被占用",
+          "object": "卡洛斯",
+          "describe": "",
+          "address": [
+            "the Ville",
+            "卡洛斯的公寓",
+            "主人房",
+            "床"
+          ],
+          "emoji": "🛌"
+        },
+        "start": "20250411-01:00:00",
+        "duration": 60
+      },
+      "coord": [
+        94,
+        18
+      ]
+    },
+    "乔治": {
+      "config_path": "assets/village/agents/乔治/agent.json",
+      "status": {
+        "poignancy": 0
+      },
+      "schedule": {
+        "create": "20250411-01:00:00",
+        "daily_schedule": [
+          {
+            "idx": 0,
+            "describe": "睡觉",
+            "start": 0,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 1,
+            "describe": "睡觉",
+            "start": 60,
+            "duration": 60,
+            "decompose": [
+              {
+                "idx": 0,
+                "describe": "睡前放松",
+                "start": 60,
+                "duration": 5
+              },
+              {
+                "idx": 1,
+                "describe": "进入深度睡眠阶段",
+                "start": 65,
+                "duration": 10
+              },
+              {
+                "idx": 2,
+                "describe": "维持睡眠状态",
+                "start": 75,
+                "duration": 10
+              },
+              {
+                "idx": 3,
+                "describe": "梦见数学问题",
+                "start": 85,
+                "duration": 5
+              },
+              {
+                "idx": 4,
+                "describe": "继续维持睡眠状态",
+                "start": 90,
+                "duration": 10
+              },
+              {
+                "idx": 5,
+                "describe": "轻微翻身调整睡姿",
+                "start": 100,
+                "duration": 5
+              },
+              {
+                "idx": 6,
+                "describe": "梦见数学模式",
+                "start": 105,
+                "duration": 5
+              },
+              {
+                "idx": 7,
+                "describe": "维持睡眠状态",
+                "start": 110,
+                "duration": 10
+              },
+              {
+                "idx": 8,
+                "describe": "轻微翻身调整睡姿",
+                "start": 120,
+                "duration": 5
+              }
+            ]
+          },
+          {
+            "idx": 2,
+            "describe": "睡觉",
+            "start": 120,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 3,
+            "describe": "睡觉",
+            "start": 180,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 4,
+            "describe": "睡觉",
+            "start": 240,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 5,
+            "describe": "睡觉",
+            "start": 300,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 6,
+            "describe": "睡觉",
+            "start": 360,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 7,
+            "describe": "起床",
+            "start": 420,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 8,
+            "describe": "开始研究自然界中的数学模式",
+            "start": 480,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 9,
+            "describe": "继续研究自然界中的数学模式",
+            "start": 540,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 10,
+            "describe": "继续研究自然界中的数学模式",
+            "start": 600,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 11,
+            "describe": "继续研究自然界中的数学模式",
+            "start": 660,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 12,
+            "describe": "吃午饭",
+            "start": 720,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 13,
+            "describe": "休息或阅读相关书籍",
+            "start": 780,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 14,
+            "describe": "上课，了解最新的数学理论",
+            "start": 840,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 15,
+            "describe": "继续上课",
+            "start": 900,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 16,
+            "describe": "结束课程，准备晚饭",
+            "start": 960,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 17,
+            "describe": "吃晚饭",
+            "start": 1020,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 18,
+            "describe": "休息或处理日常事务",
+            "start": 1080,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 19,
+            "describe": "准备与朋友讨论市长选举的情况",
+            "start": 1140,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 20,
+            "describe": "和朋友讨论当地市长选举的情况",
+            "start": 1200,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 21,
+            "describe": "继续讨论，可能进行一些研究工作",
+            "start": 1260,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 22,
+            "describe": "完成当天的工作和准备睡觉",
+            "start": 1320,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 23,
+            "describe": "睡觉",
+            "start": 1380,
+            "duration": 60,
+            "decompose": {}
+          }
+        ]
+      },
+      "associate": {
+        "memory": {
+          "event": [],
+          "thought": [
+            "node_0"
+          ],
+          "chat": []
+        }
+      },
+      "chats": [],
+      "currently": "乔治正在进行一项研究项目，探索自然界中的数学模式。他也在上课，以了解最新的数学理论。乔治也很好奇下个月谁将参加当地市长选举，他经常和其他人谈论这件事。",
+      "action": {
+        "event": {
+          "subject": "乔治",
+          "predicate": "正在",
+          "object": "睡觉",
+          "describe": "",
+          "address": [
+            "the Ville",
+            "乔治的公寓",
+            "主人房",
+            "床"
+          ],
+          "emoji": "😴"
+        },
+        "obj_event": {
+          "subject": "床",
+          "predicate": "被占用",
+          "object": "乔治",
+          "describe": "",
+          "address": [
+            "the Ville",
+            "乔治的公寓",
+            "主人房",
+            "床"
+          ],
+          "emoji": "🛌"
+        },
+        "start": "20250411-01:00:00",
+        "duration": 60
+      },
+      "coord": [
+        86,
+        18
+      ]
+    },
+    "瑞恩": {
+      "config_path": "assets/village/agents/瑞恩/agent.json",
+      "status": {
+        "poignancy": 0
+      },
+      "schedule": {
+        "create": "20250411-01:00:00",
+        "daily_schedule": [
+          {
+            "idx": 0,
+            "describe": "睡觉",
+            "start": 0,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 1,
+            "describe": "睡觉",
+            "start": 60,
+            "duration": 60,
+            "decompose": [
+              {
+                "idx": 0,
+                "describe": "进入深度睡眠阶段",
+                "start": 60,
+                "duration": 5
+              },
+              {
+                "idx": 1,
+                "describe": "维持深度睡眠状态",
+                "start": 65,
+                "duration": 5
+              },
+              {
+                "idx": 2,
+                "describe": "深度睡眠持续中",
+                "start": 70,
+                "duration": 5
+              },
+              {
+                "idx": 3,
+                "describe": "保持深度睡眠",
+                "start": 75,
+                "duration": 5
+              },
+              {
+                "idx": 4,
+                "describe": "继续深度睡眠",
+                "start": 80,
+                "duration": 5
+              },
+              {
+                "idx": 5,
+                "describe": "深度睡眠阶段",
+                "start": 85,
+                "duration": 5
+              },
+              {
+                "idx": 6,
+                "describe": "保持在深度睡眠中",
+                "start": 90,
+                "duration": 5
+              },
+              {
+                "idx": 7,
+                "describe": "继续维持深度睡眠状态",
+                "start": 95,
+                "duration": 5
+              },
+              {
+                "idx": 8,
+                "describe": "深度睡眠持续进行",
+                "start": 100,
+                "duration": 5
+              },
+              {
+                "idx": 9,
+                "describe": "保持在深度睡眠阶段中",
+                "start": 105,
+                "duration": 5
+              },
+              {
+                "idx": 10,
+                "describe": "睡觉",
+                "start": 110,
+                "duration": 10
+              }
+            ]
+          },
+          {
+            "idx": 2,
+            "describe": "睡觉",
+            "start": 120,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 3,
+            "describe": "睡觉",
+            "start": 180,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 4,
+            "describe": "睡觉",
+            "start": 240,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 5,
+            "describe": "睡觉",
+            "start": 300,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 6,
+            "describe": "睡觉",
+            "start": 360,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 7,
+            "describe": "睡觉",
+            "start": 420,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 8,
+            "describe": "睡觉",
+            "start": 480,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 9,
+            "describe": "起床",
+            "start": 540,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 10,
+            "describe": "查看电子邮件和回复重要信息",
+            "start": 600,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 11,
+            "describe": "开始开发新的移动应用程序",
+            "start": 660,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 12,
+            "describe": "吃午饭",
+            "start": 720,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 13,
+            "describe": "继续开发新应用并研究新技术",
+            "start": 780,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 14,
+            "describe": "继续开发新应用并研究新技术",
+            "start": 840,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 15,
+            "describe": "继续开发新应用并研究新技术",
+            "start": 900,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 16,
+            "describe": "继续开发新应用并研究新技术",
+            "start": 960,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 17,
+            "describe": "吃晚饭",
+            "start": 1020,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 18,
+            "describe": "休息一下，短暂散步或做一些轻松的活动",
+            "start": 1080,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 19,
+            "describe": "继续工作，专注于解决应用程序中的问题",
+            "start": 1140,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 20,
+            "describe": "继续工作，专注于解决应用程序中的问题",
+            "start": 1200,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 21,
+            "describe": "继续工作，专注于解决应用程序中的问题",
+            "start": 1260,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 22,
+            "describe": "继续工作，专注于解决应用程序中的问题",
+            "start": 1320,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 23,
+            "describe": "准备结束一天的工作",
+            "start": 1380,
+            "duration": 60,
+            "decompose": {}
+          }
+        ]
+      },
+      "associate": {
+        "memory": {
+          "event": [],
+          "thought": [
+            "node_0"
+          ],
+          "chat": []
+        }
+      },
+      "chats": [],
+      "currently": "瑞恩正在开发一个新的移动应用程序。他也在研究最新技术，以保持领先地位。",
+      "action": {
+        "event": {
+          "subject": "瑞恩",
+          "predicate": "正在",
+          "object": "睡觉",
+          "describe": "",
+          "address": [
+            "the Ville",
+            "瑞恩的公寓",
+            "主人房",
+            "床"
+          ],
+          "emoji": "😴"
+        },
+        "obj_event": {
+          "subject": "床",
+          "predicate": "被占用",
+          "object": "瑞恩",
+          "describe": "",
+          "address": [
+            "the Ville",
+            "瑞恩的公寓",
+            "主人房",
+            "床"
+          ],
+          "emoji": "🛌"
+        },
+        "start": "20250411-01:00:00",
+        "duration": 60
+      },
+      "coord": [
+        65,
+        19
+      ]
+    },
+    "山本百合子": {
+      "config_path": "assets/village/agents/山本百合子/agent.json",
+      "status": {
+        "poignancy": 0
+      },
+      "schedule": {
+        "create": "20250411-01:00:00",
+        "daily_schedule": [
+          {
+            "idx": 0,
+            "describe": "睡觉",
+            "start": 0,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 1,
+            "describe": "睡觉",
+            "start": 60,
+            "duration": 60,
+            "decompose": [
+              {
+                "idx": 0,
+                "describe": "睡前放松，冥想",
+                "start": 60,
+                "duration": 5
+              },
+              {
+                "idx": 1,
+                "describe": "深度睡眠阶段一",
+                "start": 65,
+                "duration": 10
+              },
+              {
+                "idx": 2,
+                "describe": "深度睡眠阶段二",
+                "start": 75,
+                "duration": 10
+              },
+              {
+                "idx": 3,
+                "describe": "梦境阶段",
+                "start": 85,
+                "duration": 5
+              },
+              {
+                "idx": 4,
+                "describe": "深度睡眠阶段三",
+                "start": 90,
+                "duration": 10
+              },
+              {
+                "idx": 5,
+                "describe": "轻微觉醒状态",
+                "start": 100,
+                "duration": 5
+              },
+              {
+                "idx": 6,
+                "describe": "梦境阶段二",
+                "start": 105,
+                "duration": 5
+              },
+              {
+                "idx": 7,
+                "describe": "深度睡眠阶段四",
+                "start": 110,
+                "duration": 10
+              }
+            ]
+          },
+          {
+            "idx": 2,
+            "describe": "睡觉",
+            "start": 120,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 3,
+            "describe": "睡觉",
+            "start": 180,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 4,
+            "describe": "睡觉",
+            "start": 240,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 5,
+            "describe": "睡觉",
+            "start": 300,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 6,
+            "describe": "睡觉",
+            "start": 360,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 7,
+            "describe": "起床",
+            "start": 420,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 8,
+            "describe": "准备早餐",
+            "start": 480,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 9,
+            "describe": "为当地企业开展税务合规项目工作",
+            "start": 540,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 10,
+            "describe": "为当地企业开展税务合规项目工作",
+            "start": 600,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 11,
+            "describe": "为当地企业开展税务合规项目工作",
+            "start": 660,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 12,
+            "describe": "吃午饭",
+            "start": 720,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 13,
+            "describe": "继续进行税务合规项目工作",
+            "start": 780,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 14,
+            "describe": "继续进行税务合规项目工作",
+            "start": 840,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 15,
+            "describe": "参加税法课程",
+            "start": 900,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 16,
+            "describe": "参加税法课程",
+            "start": 960,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 17,
+            "describe": "吃晚饭",
+            "start": 1020,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 18,
+            "describe": "查看地方市长选举候选人信息",
+            "start": 1080,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 19,
+            "describe": "完成查看地方市长选举候选人信息，可能进行一些放松活动如阅读或散步",
+            "start": 1140,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 20,
+            "describe": "放松时间，可能观看新闻或准备第二天的工作计划",
+            "start": 1200,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 21,
+            "describe": "准备睡觉",
+            "start": 1260,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 22,
+            "describe": "睡觉",
+            "start": 1320,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 23,
+            "describe": "睡觉",
+            "start": 1380,
+            "duration": 60,
+            "decompose": {}
+          }
+        ]
+      },
+      "associate": {
+        "memory": {
+          "event": [],
+          "thought": [
+            "node_0"
+          ],
+          "chat": []
+        }
+      },
+      "chats": [],
+      "currently": "山本百合子正在为一家当地企业开展税务合规项目。她还参加了一些课程，以了解最新的税法。山本百合子也很好奇谁将参加下个月的地方市长选举。",
+      "action": {
+        "event": {
+          "subject": "山本百合子",
+          "predicate": "正在",
+          "object": "睡觉",
+          "describe": "",
+          "address": [
+            "the Ville",
+            "山本百合子的房子",
+            "主人房",
+            "床"
+          ],
+          "emoji": "😴"
+        },
+        "obj_event": {
+          "subject": "床",
+          "predicate": "被占用",
+          "object": "山本百合子",
+          "describe": "",
+          "address": [
+            "the Ville",
+            "山本百合子的房子",
+            "主人房",
+            "床"
+          ],
+          "emoji": "🛌"
+        },
+        "start": "20250411-01:00:00",
+        "duration": 60
+      },
+      "coord": [
+        28,
+        65
+      ]
+    },
+    "亚当": {
+      "config_path": "assets/village/agents/亚当/agent.json",
+      "status": {
+        "poignancy": 0
+      },
+      "schedule": {
+        "create": "20250411-01:00:00",
+        "daily_schedule": [
+          {
+            "idx": 0,
+            "describe": "睡觉",
+            "start": 0,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 1,
+            "describe": "睡觉",
+            "start": 60,
+            "duration": 60,
+            "decompose": [
+              {
+                "idx": 0,
+                "describe": "进入深度睡眠阶段",
+                "start": 60,
+                "duration": 5
+              },
+              {
+                "idx": 1,
+                "describe": "维持深度睡眠状态",
+                "start": 65,
+                "duration": 5
+              },
+              {
+                "idx": 2,
+                "describe": "梦见与创造力相关的场景",
+                "start": 70,
+                "duration": 10
+              },
+              {
+                "idx": 3,
+                "describe": "进一步维持深度睡眠",
+                "start": 80,
+                "duration": 5
+              },
+              {
+                "idx": 4,
+                "describe": "继续梦境活动",
+                "start": 85,
+                "duration": 10
+              },
+              {
+                "idx": 5,
+                "describe": "梦见与哲学思考相关的场景",
+                "start": 95,
+                "duration": 5
+              },
+              {
+                "idx": 6,
+                "describe": "进一步维持深度睡眠状态",
+                "start": 100,
+                "duration": 5
+              },
+              {
+                "idx": 7,
+                "describe": "继续梦境活动",
+                "start": 105,
+                "duration": 10
+              },
+              {
+                "idx": 8,
+                "describe": "开始从梦中醒来",
+                "start": 115,
+                "duration": 5
+              }
+            ]
+          },
+          {
+            "idx": 2,
+            "describe": "睡觉",
+            "start": 120,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 3,
+            "describe": "睡觉",
+            "start": 180,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 4,
+            "describe": "起床，准备开始一天的工作",
+            "start": 240,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 5,
+            "describe": "开始写作，研究关于创造力的理论",
+            "start": 300,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 6,
+            "describe": "继续写作和研究",
+            "start": 360,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 7,
+            "describe": "继续写作和研究",
+            "start": 420,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 8,
+            "describe": "休息，进行简单的身体活动或冥想",
+            "start": 480,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 9,
+            "describe": "查阅资料，探索不同观点以丰富书的内容",
+            "start": 540,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 10,
+            "describe": "深入研究创造力理论及其应用案例",
+            "start": 600,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 11,
+            "describe": "整理上午的研究成果和写作内容",
+            "start": 660,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 12,
+            "describe": "吃午饭",
+            "start": 720,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 13,
+            "describe": "继续写作并思考如何挑战读者的先入为主的观念",
+            "start": 780,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 14,
+            "describe": "深化对创造力重要性的理解，构思新的章节",
+            "start": 840,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 15,
+            "describe": "休息，散步或冥想",
+            "start": 900,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 16,
+            "describe": "准备晚饭",
+            "start": 960,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 17,
+            "describe": "吃晚饭",
+            "start": 1020,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 18,
+            "describe": "研究地方市长选举的相关信息和候选人背景",
+            "start": 1080,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 19,
+            "describe": "分析候选人的政策立场及其对创造力的影响",
+            "start": 1140,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 20,
+            "describe": "上床睡觉，准备休息",
+            "start": 1200,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 21,
+            "describe": "回顾一天的工作，进行睡前反思",
+            "start": 1260,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 22,
+            "describe": "睡觉",
+            "start": 1320,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 23,
+            "describe": "睡觉",
+            "start": 1380,
+            "duration": 60,
+            "decompose": {}
+          }
+        ]
+      },
+      "associate": {
+        "memory": {
+          "event": [],
+          "thought": [
+            "node_0"
+          ],
+          "chat": []
+        }
+      },
+      "chats": [],
+      "currently": "亚当正在写一本关于创造力的重要性以及它如何塑造世界的书。他也很好奇谁将参加下个月的地方市长选举。",
+      "action": {
+        "event": {
+          "subject": "亚当",
+          "predicate": "正在",
+          "object": "睡觉",
+          "describe": "",
+          "address": [
+            "the Ville",
+            "亚当的家",
+            "主人房",
+            "床"
+          ],
+          "emoji": "😴"
+        },
+        "obj_event": {
+          "subject": "床",
+          "predicate": "被占用",
+          "object": "亚当",
+          "describe": "",
+          "address": [
+            "the Ville",
+            "亚当的家",
+            "主人房",
+            "床"
+          ],
+          "emoji": "🛌"
+        },
+        "start": "20250411-01:00:00",
+        "duration": 60
+      },
+      "coord": [
+        20,
+        65
+      ]
+    }
+  },
+  "api_keys": {
+    "OPENAI_API_KEY": "",
+    "QIANFAN_AK": "",
+    "QIANFAN_SK": "",
+    "SPARK_APPID": "",
+    "SPARK_API_SECRET": "",
+    "SPARK_API_KEY": "",
+    "ZHIPUAI_API_KEY": ""
+  },
+  "step": 2
+}

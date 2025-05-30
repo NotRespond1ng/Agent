@@ -1,0 +1,10 @@
+{
+  "start_datetime": "",
+  "stride": 1,
+  "sec_per_step": 1,
+  "persona_init_pos": {},
+  "all_movement": {
+    "description": {},
+    "conversation": {}
+  }
+}

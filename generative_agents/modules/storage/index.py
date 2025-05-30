@@ -7,8 +7,11 @@ from llama_index.core.indices.vector_store.retrievers import VectorIndexRetrieve
 from llama_index.core.schema import TextNode
 from llama_index import core as index_core
 from llama_index.embeddings.ollama import OllamaEmbedding
+from llama_index.embeddings.openai import OpenAIEmbedding
 from llama_index.core.node_parser import SentenceSplitter
 from llama_index.core import Settings
+# from langchain_openai import OpenAIEmbeddings
+
 from modules import utils
 
 
@@ -22,6 +25,12 @@ class LlamaIndex:
                 model_name=embedding["model"],
                 base_url=embedding["base_url"],
                 ollama_additional_kwargs={"mirostat": 0},
+            )
+        elif embedding['type'] == 'openai':
+            embed_model = OpenAIEmbedding(
+                model=embedding['model'],
+                api_base=embedding['base_url'],
+                api_key='sk-Vlr3Ie1XffJP1hFyPYH9op021Oa6y0tbRgU6HOIdpkUkFTJm'
             )
         else:
             raise NotImplementedError(

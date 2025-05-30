@@ -58,7 +58,8 @@ def index():
 
     return render_template(
         "index.html",
-        persona_names=personas,
+        # 使用加载数据的键作为模板的persona_names
+        persona_names=list(params["persona_init_pos"].keys()),
         step=step,
         play_speed=speed,
         zoom=zoom,
