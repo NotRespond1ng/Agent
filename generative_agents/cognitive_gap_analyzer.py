@@ -492,6 +492,11 @@ def load_agent_from_storage(agent_name: str, storage_path: str, config: Dict = N
                 print(f"读取agent配置文件失败: {e}")
                 return None
             
+            # 确保agent_config是字典类型
+            if not isinstance(agent_config, dict):
+                print(f"agent配置文件格式错误，期望字典类型，实际为: {type(agent_config)}")
+                return None
+            
             # 构建完整的配置
             config = {
                 "name": agent_config.get("name", agent_name),
