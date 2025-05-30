@@ -516,7 +516,8 @@ def load_agent_from_storage(agent_name: str, storage_path: str, config: Dict = N
                 "associate": {
                     "embedding": {
                         "type": "openai",
-                        "model": "text-embedding-v3"
+                        "model": "text-embedding-3-small",
+                        "base_url": "https://yunwu.ai/v1"
                     },
                     "retention": 8,
                     "max_memory": -1,
