@@ -24,9 +24,10 @@ from pathlib import Path
 class CognitiveGraphExtractor:
     """认知图提取器 - 从agent记忆中提取认知关系图"""
     
-    def __init__(self, llm_model=None):
+    def __init__(self, known_agents=None, llm_model=None):
         self.agent_name_pattern = re.compile(r'[\u4e00-\u9fff]+|[A-Za-z]+')  # 匹配中文名或英文名
         self.llm_model = llm_model  # LLM模型实例，用于智能识别Agent名称
+        self.known_agents = set(known_agents) if known_agents else set()  # 已知的agent名称列表
     
     def decode_text(self, text: str) -> str:
         """解码可能包含Unicode转义序列的文本"""
@@ -72,8 +73,13 @@ class CognitiveGraphExtractor:
         # 首先解码文本
         decoded_text = self.decode_text(text)
         
-        # 如果有LLM模型，使用智能识别
+        # 如果有已知的agent列表，直接在文本中查找这些名称
+        if self.known_agents:
+            return self.extract_agents_from_known_list(decoded_text)
+        
+        # 如果有LLM模型，使用智能识别（但不推荐，浪费token）
         if self.llm_model:
+            print("警告：正在使用LLM提取agent名称，这会消耗token。建议提供known_agents参数。")
             return self.extract_agents_with_llm(decoded_text)
         
         # 否则使用传统的正则表达式方法
@@ -115,6 +121,24 @@ class CognitiveGraphExtractor:
         except Exception as e:
             print(f"LLM识别Agent名称时出错: {e}，回退到正则表达式方法")
             return self.extract_agents_with_regex(text)
+    
+    def extract_agents_from_known_list(self, text: str) -> Set[str]:
+        """从已知agent列表中查找在文本中出现的agent名称（推荐方法）"""
+        found_agents = set()
+        
+        for agent_name in self.known_agents:
+            # 检查agent名称是否在文本中出现
+            if agent_name in text:
+                # 进一步验证：确保是作为独立词汇出现，而不是其他词的一部分
+                # 使用简单的边界检查
+                import re
+                pattern = r'\b' + re.escape(agent_name) + r'\b'
+                if re.search(pattern, text):
+                    found_agents.add(agent_name)
+                elif agent_name in text:  # 对于中文名称，边界检查可能不适用
+                    found_agents.add(agent_name)
+        
+        return found_agents
     
     def extract_agents_with_regex(self, text: str) -> Set[str]:
         """使用正则表达式提取Agent名称（传统方法）"""
@@ -649,12 +673,16 @@ class GraphDifferenceCalculator:
 class CognitiveWorldGapAnalyzer:
     """认知世界差距分析器 - 主要分析类"""
     
-    def __init__(self, agents: Dict = None, conversation_data: Dict = None, llm_model=None):
+    def __init__(self, agents: Dict = None, conversation_data: Dict = None, llm_model=None, known_agents=None):
         self.agents = agents or {}
         self.conversation_data = conversation_data or {}
         self.llm_model = llm_model
         
-        self.cognitive_extractor = CognitiveGraphExtractor(llm_model=llm_model)
+        # 如果没有提供known_agents，从agents字典中提取agent名称
+        if known_agents is None and agents:
+            known_agents = list(agents.keys())
+        
+        self.cognitive_extractor = CognitiveGraphExtractor(known_agents=known_agents, llm_model=llm_model)
         self.real_world_extractor = RealWorldGraphExtractor()
         self.diff_calculator = GraphDifferenceCalculator(llm_model=llm_model)
         
@@ -1214,6 +1242,53 @@ def select_agents(simulation_name: str) -> Optional[List[str]]:
             print("无效输入，请输入数字")
 
 
+def load_llm_config():
+    """加载LLM配置"""
+    config_path = os.path.join("data", "config.json")
+    try:
+        with open(config_path, "r", encoding="utf-8") as f:
+            config = json.load(f)
+            llm_config = config["agent"]["think"]["llm"]
+            llm_config["keys"] = config["api_keys"]
+            return llm_config
+    except Exception as e:
+        print(f"警告：无法加载配置文件：{e}")
+        return None
+
+def create_llm_instance():
+    """创建LLM实例"""
+    try:
+        from modules.model.llm_model import create_llm_model
+        
+        # 加载配置
+        llm_config = load_llm_config()
+        if not llm_config:
+            print("无法加载LLM配置")
+            return None
+        
+        # 创建LLM实例
+        print("正在创建 LLM 实例...")
+        llm_instance = create_llm_model(
+            base_url=llm_config["base_url"],
+            model=llm_config["model"],
+            embedding_model=llm_config.get("embedding_model"),
+            keys=llm_config["keys"]
+        )
+        
+        if llm_instance and llm_instance.is_available():
+            print(f"✓ LLM 实例 ({llm_instance.__class__.__name__}) 创建成功")
+            return llm_instance
+        else:
+            print("LLM 实例创建失败或不可用")
+            return None
+            
+    except ImportError as e:
+        print(f"无法导入 LLM 模块：{e}")
+        return None
+    except Exception as e:
+        print(f"创建 LLM 实例时出错：{e}")
+        return None
+
 def main():
     """主函数 - 交互式认知差距分析"""
     print("\n=== Agent认知模型与真实世界差距度量分析器 ===")
@@ -1234,10 +1309,18 @@ def main():
     
     print(f"选择的agents: {', '.join(selected_agents)}")
     
-    # 3. 加载agents
-    print("\n正在加载agents...")
+    # 3. 创建LLM实例
+    print("\n--- 开始 LLM 初始化 ---")
+    llm_model = create_llm_instance()
+    if llm_model:
+        print("✓ LLM 模型初始化成功，将启用 LLM 增强分析")
+    else:
+        print("⚠ LLM 模型初始化失败，将使用传统分析方法")
+    print("--- LLM 初始化结束 ---\n")
+    
+    # 4. 加载agents
+    print("正在加载agents...")
     loaded_agents = {}
-    llm_model = None
     
     for agent_name in selected_agents:
         storage_path = f"results/checkpoints/{simulation_name}/storage/{agent_name}"
@@ -1246,18 +1329,6 @@ def main():
         if agent:
             loaded_agents[agent_name] = agent
             print(f"✓ 成功加载 {agent_name}")
-            
-            # 尝试获取LLM模型实例（从第一个成功加载的agent中获取）
-            if llm_model is None:
-                try:
-                    if hasattr(agent, 'llm') and agent.llm:
-                        llm_model = agent.llm
-                        print(f"✓ 从 {agent_name} 获取到LLM模型实例")
-                    elif hasattr(agent, 'llm_model') and agent.llm_model:
-                        llm_model = agent.llm_model
-                        print(f"✓ 从 {agent_name} 获取到LLM模型实例")
-                except Exception as e:
-                    print(f"从 {agent_name} 获取LLM模型失败: {str(e)}")
         else:
             print(f"✗ 加载 {agent_name} 失败")
     
@@ -1265,9 +1336,10 @@ def main():
         print("没有成功加载任何agent，退出程序")
         return
     
-    # 4. 加载对话数据并创建分析器
+    # 5. 加载对话数据并创建分析器
     conversation_path = f"results/checkpoints/{simulation_name}/conversation.json"
-    analyzer = CognitiveWorldGapAnalyzer(agents=loaded_agents, llm_model=llm_model)
+    # 传递known_agents参数，避免使用LLM提取agent名称
+    analyzer = CognitiveWorldGapAnalyzer(agents=loaded_agents, llm_model=llm_model, known_agents=selected_agents)
     
     if not analyzer.load_conversation_data(conversation_path):
         print(f"加载对话数据失败: {conversation_path}")
@@ -1280,14 +1352,14 @@ def main():
     else:
         print("⚠ 未找到LLM模型，将使用传统分析方法")
     
-    # 5. 生成分析报告
+    # 6. 生成分析报告
     print("\n正在生成认知差距分析报告...")
     report = analyzer.generate_gap_report()
     
-    # 6. 显示结果
+    # 7. 显示结果
     analyzer.print_summary(report)
     
-    # 7. 保存报告
+    # 8. 保存报告
     report_path = f"results/checkpoints/{simulation_name}/cognitive_gap_report.json"
     if analyzer.save_report(report, report_path):
         print(f"\n报告已保存到: {report_path}")
