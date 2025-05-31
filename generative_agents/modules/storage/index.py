@@ -237,12 +237,17 @@ class LlamaIndex:
                     expire = utils.to_date(expire_str)
                 
                 # 检查是否需要移除
+                # 注意：暂时禁用基于过期时间的清理，因为历史数据的过期时间可能早于当前时间
+                # 只有当创建时间晚于当前时间时才删除（这种情况通常不应该发生）
                 if create > now:
                     print(f"节点 {node_id} 创建时间 {create} 晚于当前时间 {now}，标记删除")
                     remove_ids.append(node_id)
-                elif expire < now:
-                    print(f"节点 {node_id} 过期时间 {expire} 早于当前时间 {now}，标记删除")
-                    remove_ids.append(node_id)
+                # elif expire < now:
+                #     print(f"节点 {node_id} 过期时间 {expire} 早于当前时间 {now}，标记删除")
+                #     remove_ids.append(node_id)
+                else:
+                    # 保留节点，不进行基于过期时间的清理
+                    pass
                     
             except Exception as e:
                 print(f"处理节点 {node_id} 时出错: {e}，跳过清理")
