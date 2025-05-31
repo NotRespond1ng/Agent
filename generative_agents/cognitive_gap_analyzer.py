@@ -177,17 +177,15 @@ class CognitiveGraphExtractor:
         # 获取LLM模型实例（如果agent有的话）
         llm_model = None
         try:
-            # 尝试从agent的llm属性中获取LLM模型
-            if hasattr(agent, 'llm') and agent.llm:
-                llm_model = agent.llm
+            # 尝试从agent的_llm属性中获取LLM模型（正确的属性名）
+            if hasattr(agent, '_llm') and agent._llm and agent.llm_available():
+                llm_model = agent._llm
                 print(f"成功获取到Agent的LLM模型: {type(llm_model)}")
-            # 或者尝试从其他可能的属性中获取
-            elif hasattr(agent, 'llm_model') and agent.llm_model:
-                llm_model = agent.llm_model
-                print(f"从llm_model属性获取到LLM模型: {type(llm_model)}")
             else:
                 print("未找到LLM模型实例，将使用传统的正则表达式方法")
-                print(f"Agent属性: {[attr for attr in dir(agent) if not attr.startswith('_')]}")
+                print(f"Agent LLM可用性: {agent.llm_available() if hasattr(agent, 'llm_available') else 'N/A'}")
+                if hasattr(agent, '_llm'):
+                    print(f"Agent._llm: {agent._llm}")
         except Exception as e:
             print(f"获取LLM模型时出错: {e}，将使用传统方法")
             print(f"错误详情: {traceback.format_exc()}")
@@ -303,9 +301,35 @@ class CognitiveGraphExtractor:
     def _initialize_agent_memory(self, agent):
         """初始化Agent的记忆字典，从docstore中获取所有节点ID并按类型分类"""
         try:
-            # 获取所有节点
-            all_nodes = agent.associate._index.get_nodes()
-            print(f"从docstore中获取到 {len(all_nodes)} 个节点")
+            # 尝试不同的方法获取所有节点
+            all_nodes = []
+            
+            # 方法1：尝试从docstore直接获取
+            if hasattr(agent.associate._index, '_index') and hasattr(agent.associate._index._index, 'docstore'):
+                docstore = agent.associate._index._index.docstore
+                if hasattr(docstore, 'docs') and docstore.docs:
+                    all_nodes = list(docstore.docs.values())
+                    print(f"从docstore.docs中获取到 {len(all_nodes)} 个节点")
+            
+            # 方法2：如果方法1失败，尝试get_nodes方法
+            if not all_nodes and hasattr(agent.associate._index, 'get_nodes'):
+                try:
+                    all_nodes = agent.associate._index.get_nodes()
+                    print(f"从get_nodes()中获取到 {len(all_nodes)} 个节点")
+                except Exception as e:
+                    print(f"get_nodes()调用失败: {e}")
+            
+            # 方法3：如果前面都失败，尝试从_index.docstore获取
+            if not all_nodes and hasattr(agent.associate._index, '_index'):
+                try:
+                    index = agent.associate._index._index
+                    if hasattr(index, 'docstore') and hasattr(index.docstore, 'docs'):
+                        all_nodes = list(index.docstore.docs.values())
+                        print(f"从_index.docstore.docs中获取到 {len(all_nodes)} 个节点")
+                except Exception as e:
+                    print(f"从_index.docstore获取节点失败: {e}")
+            
+            print(f"最终获取到 {len(all_nodes)} 个节点")
             
             # 按类型分类节点ID
             memory_by_type = {"event": [], "thought": [], "chat": []}
@@ -313,6 +337,11 @@ class CognitiveGraphExtractor:
             for node in all_nodes:
                 if hasattr(node, 'metadata') and 'node_type' in node.metadata:
                     node_type = node.metadata['node_type']
+                    if node_type in memory_by_type:
+                        memory_by_type[node_type].append(node.id_)
+                elif hasattr(node, 'extra_info') and 'node_type' in node.extra_info:
+                    # 有些节点可能使用extra_info存储元数据
+                    node_type = node.extra_info['node_type']
                     if node_type in memory_by_type:
                         memory_by_type[node_type].append(node.id_)
             
@@ -393,36 +422,7 @@ class RealWorldGraphExtractor:
         
         return G
     
-    def _initialize_agent_memory(self, agent):
-        """初始化Agent的记忆字典，从docstore中获取所有节点ID并按类型分类"""
-        try:
-            # 获取所有节点
-            all_nodes = agent.associate._index.get_nodes()
-            print(f"从docstore中获取到 {len(all_nodes)} 个节点")
-            
-            # 按类型分类节点ID
-            memory_by_type = {"event": [], "thought": [], "chat": []}
-            
-            for node in all_nodes:
-                if hasattr(node, 'metadata') and 'node_type' in node.metadata:
-                    node_type = node.metadata['node_type']
-                    if node_type in memory_by_type:
-                        memory_by_type[node_type].append(node.id_)
-            
-            # 更新Associate的memory字典
-            agent.associate.memory = memory_by_type
-            
-            print(f"记忆分类统计:")
-            print(f"  对话记忆: {len(memory_by_type['chat'])} 个")
-            print(f"  事件记忆: {len(memory_by_type['event'])} 个")
-            print(f"  思考记忆: {len(memory_by_type['thought'])} 个")
-            
-        except Exception as e:
-            print(f"初始化记忆字典时出错: {e}")
-            print(f"错误详情: {traceback.format_exc()}")
-            # 如果失败，至少确保memory字典存在
-            if not hasattr(agent.associate, 'memory') or not agent.associate.memory:
-                agent.associate.memory = {"event": [], "thought": [], "chat": []}
+
 
 
 class GraphDifferenceCalculator:
