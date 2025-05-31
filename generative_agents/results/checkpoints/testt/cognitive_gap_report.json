@@ -2,15 +2,15 @@
   "summary": {
     "total_agents": 1,
     "analyzed_agents": 1,
-    "average_cognitive_gap": 0.17142857142857149,
+    "average_cognitive_gap": 0.6,
     "std_cognitive_gap": 0.0,
     "max_gap_agent": {
-      "name": "拉托亚",
-      "gap": 0.17142857142857149
+      "name": "梅",
+      "gap": 0.6
     },
     "min_gap_agent": {
-      "name": "拉托亚",
-      "gap": 0.17142857142857149
+      "name": "梅",
+      "gap": 0.6
     },
     "real_world_graph_info": {
       "total_nodes": 11,
@@ -19,18 +19,18 @@
     }
   },
   "detailed_results": {
-    "拉托亚": {
-      "agent_name": "拉托亚",
-      "cognitive_nodes": 2,
-      "cognitive_edges": 1,
-      "real_nodes": 2,
-      "real_edges": 1,
+    "梅": {
+      "agent_name": "梅",
+      "cognitive_nodes": 3,
+      "cognitive_edges": 2,
+      "real_nodes": 3,
+      "real_edges": 2,
       "gap_metrics": {
-        "cognitive_gap": 0.17142857142857149,
-        "overall_score": 0.8285714285714285,
+        "cognitive_gap": 0.6,
+        "overall_score": 0.4,
         "node_structure_score": 1.0,
-        "edge_structure_score": 1.0,
-        "semantic_accuracy": 0.1428571428571429,
+        "edge_structure_score": 0.0,
+        "semantic_accuracy": 0.0,
         "temporal_consistency": 1.0,
         "detailed_metrics": {
           "nodes": {
@@ -40,42 +40,70 @@
             "hallucinated_nodes_count": 0,
             "missing_nodes": [],
             "hallucinated_nodes": [],
-            "cognitive_nodes_count": 2,
-            "real_nodes_count": 2
+            "cognitive_nodes_count": 3,
+            "real_nodes_count": 3
           },
           "edges": {
             "edge_count_diff": 0,
-            "edge_jaccard_similarity": 1.0,
-            "missing_edges_count": 0,
-            "hallucinated_edges_count": 0,
-            "missing_edges": [],
-            "hallucinated_edges": [],
-            "cognitive_edges_count": 1,
-            "real_edges_count": 1
+            "edge_jaccard_similarity": 0.0,
+            "missing_edges_count": 2,
+            "hallucinated_edges_count": 2,
+            "missing_edges": [
+              [
+                "埃迪",
+                "梅"
+              ],
+              [
+                "约翰",
+                "梅"
+              ]
+            ],
+            "hallucinated_edges": [
+              [
+                "梅",
+                "埃迪"
+              ],
+              [
+                "梅",
+                "约翰"
+              ]
+            ],
+            "cognitive_edges_count": 2,
+            "real_edges_count": 2
           }
         }
       },
       "llm_analysis": {
         "memory_consistency": {
           "consistency_score": 0.0,
-          "analysis": "由于没有提供Agent的记忆内容，无法进行任何事实、情感、时间或人物关系的一致性分析。因此，无法判断Agent的记忆与真实对话记录之间的关系，评分为0.0。",
-          "llm_response": "一致性评分：0.0  \n分析理由：由于没有提供Agent的记忆内容，无法进行任何事实、情感、时间或人物关系的一致性分析。因此，无法判断Agent的记忆与真实对话记录之间的关系，评分为0.0。"
+          "analysis": "记忆一致性分析已禁用，因为没有提供具体记忆内容无法进行深层分析"
         },
         "interaction_similarity": {
           "pattern_similarity": 0.3,
           "analysis": "",
-          "llm_response": "相似性评分：0.3  \n分析理由：  \n1. **交互频率的相似性**：Agent认知中的交互模式有14次对话，而真实的交互模式没有对话记录，这表明交互频率差异显著，因此相似性较低。  \n2. **交互对象的相似性**：两者均涉及同一交互对象“拉托亚-弗朗西斯科”，这在一定程度上表明对象的一致性，增加了相似性。  \n3. **交互内容类型的相似性**：Agent认知中有14次对话记录，而真实模式没有对话和事件记录，内容类型的缺失导致相似性降低。  \n4. **交互时机的相似性**：由于真实模式没有任何交互记录，无法判断交互时机的相似性，因此这一点对整体相似性评分影响较大。  \n\n综合考虑以上因素，尽管交互对象相同，但频率和内容类型的差异使得整体相似性较低。"
+          "llm_response": "相似性评分：0.3  \n分析理由：  \n1. **交互频率的相似性**：Agent认知中的交互模式显示出较高的交互频率（梅-埃迪有56次对话和15次事件），而真实的交互模式则没有任何对话和事件。这表明交互频率差异显著，因此评分较低。\n\n2. **交互对象的相似性**：在Agent认知中，梅与埃迪和约翰都有交互，而在真实的交互模式中，埃迪和约翰与梅的交互几乎不存在。虽然交互对象相同，但交互的存在与频率差异较大，导致相似性较低。\n\n3. **交互内容类型的相似性**：Agent认知中包含对话和事件，而真实的交互模式没有任何对话和事件。这种内容类型的缺失使得两者之间的相似性进一步降低。\n\n4. **交互时机的相似性**：由于真实交互模式没有记录任何交互，无法判断交互时机的相似性。Agent认知中的交互时机较为频繁，而真实模式则完全缺失，因此在这一方面的相似性也很低。\n\n综合考虑以上因素，虽然交互对象相同，但由于交互频率、内容类型和时机的显著差异，整体相似性评分较低。"
         }
       },
       "cognitive_graph_info": {
         "nodes": [
-          "拉托亚",
-          "弗朗西斯科"
+          "梅",
+          "埃迪",
+          "约翰"
         ],
         "edges": [
           [
-            "拉托亚",
-            "弗朗西斯科",
+            "梅",
+            "埃迪",
+            {
+              "weight": 63.5,
+              "chat_count": 56,
+              "event_count": 15,
+              "type": "chat"
+            }
+          ],
+          [
+            "梅",
+            "约翰",
             {
               "weight": 14,
               "chat_count": 14,
@@ -87,13 +115,22 @@
       },
       "real_graph_info": {
         "nodes": [
-          "拉托亚",
-          "弗朗西斯科"
+          "埃迪",
+          "约翰",
+          "梅"
         ],
         "edges": [
           [
-            "拉托亚",
-            "弗朗西斯科",
+            "埃迪",
+            "梅",
+            {
+              "weight": 9,
+              "interaction_count": 4
+            }
+          ],
+          [
+            "约翰",
+            "梅",
             {
               "weight": 2,
               "interaction_count": 1
