@@ -869,10 +869,42 @@ class CognitiveWorldGapAnalyzer:
                 
                 # 提取真实对话数据
                 real_conversations = []
-                if self.conversation_data and 'conversations' in self.conversation_data:
-                    for conv in self.conversation_data['conversations']:
-                        if agent_name in conv.get('participants', []):
-                            real_conversations.append(conv.get('content', ''))
+                if self.conversation_data:
+                    for timestamp, chats_at_time in self.conversation_data.items():
+                        if not isinstance(chats_at_time, list):
+                            continue
+                        
+                        for chat_group in chats_at_time:
+                            if not isinstance(chat_group, dict) or len(chat_group.keys()) != 1:
+                                continue
+                            
+                            persons_location_key = list(chat_group.keys())[0]
+                            chat_log = chat_group[persons_location_key]
+                            
+                            # 解析参与者
+                            if " @ " in persons_location_key:
+                                participants_part = persons_location_key.split(" @ ")[0]
+                            else:
+                                participants_part = persons_location_key
+                            participants_raw = participants_part.split(" -> ")
+                            
+                            # 检查当前agent是否参与了这个对话
+                            agent_participated = False
+                            for participant in participants_raw:
+                                if agent_name in participant:
+                                    agent_participated = True
+                                    break
+                            
+                            if agent_participated and isinstance(chat_log, list):
+                                # 将对话记录转换为文本
+                                conversation_text = ""
+                                for chat_entry in chat_log:
+                                    if isinstance(chat_entry, list) and len(chat_entry) >= 2:
+                                        speaker, text = chat_entry[0], chat_entry[1]
+                                        conversation_text += f"{speaker}: {text}\n"
+                                
+                                if conversation_text.strip():
+                                    real_conversations.append(conversation_text.strip())
                 
                 memory_consistency = self.diff_calculator.analyze_memory_reality_consistency_with_llm(
                     agent_memories, real_conversations
