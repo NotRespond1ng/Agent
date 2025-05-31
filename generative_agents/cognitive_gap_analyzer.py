@@ -181,6 +181,7 @@ class CognitiveGraphExtractor:
         # 使用类级别的LLM模型实例进行分析
         if self.llm_model:
             # 使用LLM模型进行分析
+            pass
         else:
             print(f"未提供LLM模型，将使用传统的正则表达式方法")
         
@@ -559,6 +560,7 @@ class GraphDifferenceCalculator:
             print(f"LLM响应长度: {len(response) if response else 0}")
             if response:
                 # LLM响应已获取
+                pass
             
             if not response:
                 return {'consistency_score': 0.0, 'analysis': 'LLM响应为空'}
@@ -682,6 +684,7 @@ class GraphDifferenceCalculator:
             print(f"LLM交互模式比较响应长度: {len(response) if response else 0}")
             if response:
                 # LLM交互响应已获取
+                pass
             
             if not response:
                 return {'pattern_similarity': 0.0, 'analysis': 'LLM响应为空'}
