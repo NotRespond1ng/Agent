@@ -606,17 +606,14 @@ def load_agent_from_storage(agent_name: str, storage_path: str, config: Dict = N
                     "max_try": 5
                 },
                 "associate": {
-                    "index_config": {
-                        "index_type": "VectorStoreIndex",
-                        "service_context": {
-                            "llm": 'gpt-4o-mini',
-                            "embed_model": "text-embedding-v3",
-                            "node_parser": {
-                                "chunk_size": 1024,
-                                "chunk_overlap": 20
-                            }
-                        }
-                    }
+                    "embedding": {
+                        "type": "openai",
+                        "model": "text-embedding-3-small",
+                        "base_url": "https://yunwu.ai/v1"
+                    },
+                    "retention": 8,
+                    "max_memory": -1,
+                    "max_importance": 10
                 },
                 "currently": agent_config.get("currently", f"{agent_name}正在思考"),
                 "scratch": agent_config.get("scratch", {
