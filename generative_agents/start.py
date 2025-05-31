@@ -86,6 +86,9 @@ class SimulateServer:
                     {"coord": status["coord"]}
                 )
 
+            # 在每个模拟步骤结束时保存所有Agent的记忆索引
+            self._save_all_agent_memories()
+
             sim_time = timer.get_date("%Y%m%d-%H:%M")
             self.config.update(
                 {
@@ -102,6 +105,20 @@ class SimulateServer:
 
             if stride > 0:
                 timer.forward(stride)
+        
+        # 模拟结束时最终保存一次
+        self._save_all_agent_memories()
+        self.logger.info("模拟完成，所有Agent记忆已保存")
+
+    def _save_all_agent_memories(self):
+        """保存所有Agent的记忆索引到磁盘"""
+        try:
+            for agent_name, agent in self.game.agents.items():
+                if hasattr(agent, 'associate') and hasattr(agent.associate, '_index'):
+                    agent.associate._index.save()
+            self.logger.debug("已保存所有Agent的记忆索引")
+        except Exception as e:
+            self.logger.error(f"保存Agent记忆时出错: {e}")
 
     def load_static(self, path):
         return utils.load_dict(os.path.join(self.static_root, path))

@@ -147,6 +147,9 @@ class Associate:
             "relevance_weight": relevance_weight,
             "importance_weight": importance_weight,
         }
+        # 添加自动保存计数器
+        self._save_counter = 0
+        self._save_interval = 5  # 每添加5个节点自动保存一次
 
     def abstract(self):
         des = {"nodes": self._index.nodes_num}
@@ -180,7 +183,7 @@ class Associate:
             "subject": event.subject,
             "predicate": event.predicate,
             "object": event.object,
-            "address": ":".join(event.address),
+            "address": ":" .join(event.address),
             "poignancy": poignancy,
             "create": create.strftime("%Y%m%d-%H:%M:%S"),
             "expire": expire.strftime("%Y%m%d-%H:%M:%S"),
@@ -192,6 +195,13 @@ class Associate:
         if len(memory) >= self.max_memory > 0:
             self._index.remove_nodes(memory[self.max_memory:])
             self.memory[node_type] = memory[: self.max_memory - 1]
+        
+        # 添加自动保存逻辑
+        self._save_counter += 1
+        if self._save_counter >= self._save_interval:
+            self._index.save()
+            self._save_counter = 0
+        
         return self.to_concept(node)
 
     def to_concept(self, node):
@@ -255,6 +265,7 @@ class Associate:
         }
 
     def to_dict(self):
+        # 确保在序列化时保存索引
         self._index.save()
         return {"memory": self.memory}
 
