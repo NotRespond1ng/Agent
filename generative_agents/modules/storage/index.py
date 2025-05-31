@@ -2,6 +2,7 @@
 
 import os
 import time
+import datetime
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 from llama_index.core.indices.vector_store.retrievers import VectorIndexRetriever
 from llama_index.core.schema import TextNode
@@ -183,13 +184,78 @@ class LlamaIndex:
         self._index.delete_nodes(node_ids, delete_from_docstore=delete_from_docstore)
 
     def cleanup(self):
-        now, remove_ids = utils.get_timer().get_date(), []
+        print(f"\n=== 开始索引清理 ===")
+        now = utils.get_timer().get_date()
+        remove_ids = []
+        print(f"当前时间: {now}")
+        
+        total_nodes = len(self._index.docstore.docs)
+        print(f"清理前节点总数: {total_nodes}")
+        
+        if total_nodes == 0:
+            print(f"没有节点需要清理")
+            print(f"=== 索引清理完成 ===\n")
+            return remove_ids
+        
+        # 检查前几个节点的时间信息
+        sample_nodes = list(self._index.docstore.docs.items())[:3]
+        for node_id, node in sample_nodes:
+            print(f"\n节点 {node_id} 的metadata:")
+            if hasattr(node, 'metadata') and node.metadata:
+                print(f"  metadata keys: {list(node.metadata.keys())}")
+                if 'create' in node.metadata:
+                    print(f"  create: {node.metadata['create']} (类型: {type(node.metadata['create'])})")
+                if 'expire' in node.metadata:
+                    print(f"  expire: {node.metadata['expire']} (类型: {type(node.metadata['expire'])})")
+            else:
+                print(f"  节点没有metadata或metadata为空")
+        
         for node_id, node in self._index.docstore.docs.items():
-            create = utils.to_date(node.metadata["create"])
-            expire = utils.to_date(node.metadata["expire"])
-            if create > now or expire < now:
-                remove_ids.append(node_id)
-        self.remove_nodes(remove_ids)
+            try:
+                # 检查节点是否有必要的时间字段
+                if not hasattr(node, 'metadata') or not node.metadata:
+                    print(f"警告: 节点 {node_id} 没有metadata，跳过清理")
+                    continue
+                    
+                if 'create' not in node.metadata or 'expire' not in node.metadata:
+                    print(f"警告: 节点 {node_id} 缺少时间字段，跳过清理")
+                    continue
+                
+                # 尝试解析时间
+                create_str = node.metadata["create"]
+                expire_str = node.metadata["expire"]
+                
+                # 如果时间字段已经是datetime对象，直接使用
+                if isinstance(create_str, datetime.datetime):
+                    create = create_str
+                else:
+                    create = utils.to_date(create_str)
+                    
+                if isinstance(expire_str, datetime.datetime):
+                    expire = expire_str
+                else:
+                    expire = utils.to_date(expire_str)
+                
+                # 检查是否需要移除
+                if create > now:
+                    print(f"节点 {node_id} 创建时间 {create} 晚于当前时间 {now}，标记删除")
+                    remove_ids.append(node_id)
+                elif expire < now:
+                    print(f"节点 {node_id} 过期时间 {expire} 早于当前时间 {now}，标记删除")
+                    remove_ids.append(node_id)
+                    
+            except Exception as e:
+                print(f"处理节点 {node_id} 时出错: {e}，跳过清理")
+                continue
+        
+        print(f"\n标记删除的节点数: {len(remove_ids)}")
+        if remove_ids:
+            print(f"删除的节点ID: {remove_ids[:5]}{'...' if len(remove_ids) > 5 else ''}")
+            self.remove_nodes(remove_ids)
+        
+        remaining_nodes = len(self._index.docstore.docs)
+        print(f"清理后节点数: {remaining_nodes}")
+        print(f"=== 索引清理完成 ===\n")
         return remove_ids
 
     def retrieve(
