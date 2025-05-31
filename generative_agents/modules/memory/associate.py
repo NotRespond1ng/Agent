@@ -1,6 +1,7 @@
 """generative_agents.memory.associate"""
 
 import datetime
+import os
 from llama_index.core.retrievers import BaseRetriever
 from llama_index.core.vector_stores import MetadataFilters, ExactMatchFilter
 from llama_index.core.indices.vector_store.retrievers import VectorIndexRetriever
@@ -136,6 +137,21 @@ class Associate:
     ):
         self._index_config = {"embedding": embedding, "path": path}
         self._index = LlamaIndex(**self._index_config)
+        
+        # 尝试从存储中恢复memory数据
+        if memory is None and path and os.path.exists(path):
+            memory_file = os.path.join(path, "memory.json")
+            if os.path.exists(memory_file):
+                try:
+                    import json
+                    with open(memory_file, 'r', encoding='utf-8') as f:
+                        saved_data = json.load(f)
+                        memory = saved_data.get("memory", {"event": [], "thought": [], "chat": []})
+                        print(f"从 {memory_file} 恢复记忆数据: {len(memory.get('chat', []))} 对话, {len(memory.get('event', []))} 事件")
+                except Exception as e:
+                    print(f"加载记忆数据失败: {e}")
+                    memory = {"event": [], "thought": [], "chat": []}
+        
         self.memory = memory or {"event": [], "thought": [], "chat": []}
         self.cleanup_index()
         self.retention = retention
@@ -267,6 +283,19 @@ class Associate:
     def to_dict(self):
         # 确保在序列化时保存索引
         self._index.save()
+        
+        # 同时将memory数据保存到单独的文件中
+        if self._index_config.get("path"):
+            memory_file = os.path.join(self._index_config["path"], "memory.json")
+            try:
+                import json
+                os.makedirs(os.path.dirname(memory_file), exist_ok=True)
+                with open(memory_file, 'w', encoding='utf-8') as f:
+                    json.dump({"memory": self.memory}, f, ensure_ascii=False, indent=2)
+                print(f"保存记忆数据到 {memory_file}: {len(self.memory.get('chat', []))} 对话, {len(self.memory.get('event', []))} 事件")
+            except Exception as e:
+                print(f"保存记忆数据失败: {e}")
+        
         return {"memory": self.memory}
 
     @property
