@@ -24,8 +24,9 @@ from pathlib import Path
 class CognitiveGraphExtractor:
     """认知图提取器 - 从agent记忆中提取认知关系图"""
     
-    def __init__(self):
+    def __init__(self, llm_model=None):
         self.agent_name_pattern = re.compile(r'[\u4e00-\u9fff]+|[A-Za-z]+')  # 匹配中文名或英文名
+        self.llm_model = llm_model  # LLM模型实例，用于智能识别Agent名称
     
     def decode_text(self, text: str) -> str:
         """解码可能包含Unicode转义序列的文本"""
@@ -71,8 +72,54 @@ class CognitiveGraphExtractor:
         # 首先解码文本
         decoded_text = self.decode_text(text)
         
+        # 如果有LLM模型，使用智能识别
+        if self.llm_model:
+            return self.extract_agents_with_llm(decoded_text)
+        
+        # 否则使用传统的正则表达式方法
+        return self.extract_agents_with_regex(decoded_text)
+    
+    def extract_agents_with_llm(self, text: str) -> Set[str]:
+        """使用LLM智能识别Agent名称"""
+        try:
+            # 构建提示词
+            prompt = f"""请从以下文本中识别出所有的人物名称（Agent名称）。这些名称可能是中文名字或英文名字。
+请只返回人物名称，每个名称占一行，不要包含其他内容。如果没有找到人物名称，请返回"无"。
+
+文本内容：
+{text[:500]}  # 限制文本长度避免token过多
+
+人物名称："""
+            
+            # 调用LLM
+            response = self.llm_model.completion(prompt, temperature=0.1)
+            
+            if not response or response.strip() == "无":
+                return set()
+            
+            # 解析LLM返回的结果
+            agent_names = set()
+            lines = response.strip().split('\n')
+            
+            for line in lines:
+                name = line.strip()
+                # 基本过滤：长度检查和常见词汇过滤
+                if (len(name) >= 2 and len(name) <= 10 and 
+                    not any(word in name for word in ['无', '没有', '不存在', 'None', 'No']) and
+                    re.match(r'^[\u4e00-\u9fff\w]+$', name)):  # 只包含中文、字母、数字
+                    agent_names.add(name)
+            
+            print(f"LLM识别到的Agent名称: {agent_names}")
+            return agent_names
+            
+        except Exception as e:
+            print(f"LLM识别Agent名称时出错: {e}，回退到正则表达式方法")
+            return self.extract_agents_with_regex(text)
+    
+    def extract_agents_with_regex(self, text: str) -> Set[str]:
+        """使用正则表达式提取Agent名称（传统方法）"""
         # 常见的agent名称模式
-        potential_names = self.agent_name_pattern.findall(decoded_text)
+        potential_names = self.agent_name_pattern.findall(text)
         
         # 过滤掉常见的非名称词汇
         common_words = {'正在', '此时', '对话', '聊天', '说话', '交谈', '讨论', '谈论', '回答', '告诉',
@@ -84,94 +131,136 @@ class CognitiveGraphExtractor:
         for name in potential_names:
             if (len(name) >= 2 and 
                 name not in common_words and 
-                self.validate_agent_name(name, decoded_text)):
+                self.validate_agent_name(name, text)):
                 agent_names.add(name)
         
         return agent_names
     
     def extract_cognitive_graph(self, agent) -> nx.Graph:
-        """从agent的记忆中提取认知图"""
+        """从agent的记忆中提取认知图 - 使用向量检索而不是memory.json"""
         G = nx.Graph()
         G.add_node(agent.name)  # 添加自己作为中心节点
         
-        # 调试信息：显示记忆统计
-        chat_memories = agent.associate.memory.get('chat', [])
-        event_memories = agent.associate.memory.get('event', [])
-        print(f"\n=== {agent.name} 记忆统计 ===")
-        print(f"对话记忆数量: {len(chat_memories)}")
-        print(f"事件记忆数量: {len(event_memories)}")
+        print(f"\n=== {agent.name} 记忆分析 ===")
         
-        # 从对话记忆中提取关系
+        # 获取LLM模型实例（如果agent有的话）
+        llm_model = None
+        try:
+            # 尝试从agent的llm属性中获取LLM模型
+            if hasattr(agent, 'llm') and agent.llm:
+                llm_model = agent.llm
+                print(f"成功获取到Agent的LLM模型: {type(llm_model)}")
+            # 或者尝试从其他可能的属性中获取
+            elif hasattr(agent, 'llm_model') and agent.llm_model:
+                llm_model = agent.llm_model
+                print(f"从llm_model属性获取到LLM模型: {type(llm_model)}")
+            else:
+                print("未找到LLM模型实例，将使用传统的正则表达式方法")
+                print(f"Agent属性: {[attr for attr in dir(agent) if not attr.startswith('_')]}")
+        except Exception as e:
+            print(f"获取LLM模型时出错: {e}，将使用传统方法")
+            print(f"错误详情: {traceback.format_exc()}")
+        
+        # 创建认知图提取器，传入LLM模型
+        extractor = CognitiveGraphExtractor(llm_model=llm_model)
+        
+        # 使用向量检索获取对话相关的记忆
+        chat_queries = [
+            "对话", "聊天", "说话", "交谈", "讨论", "谈论", "回答", "告诉",
+            "chat", "talk", "conversation", "dialogue", "speak", "say"
+        ]
+        
         chat_agents_found = set()
-        for i, chat_node_id in enumerate(chat_memories):
+        chat_memories_count = 0
+        
+        for query in chat_queries:
             try:
-                concept = agent.associate.find_concept(chat_node_id)
-                if concept and concept.describe:
-                    # 显示前几个记忆的内容（调试用）
-                    if i < 3:
-                        original_text = concept.describe[:100]
-                        decoded_text = self.decode_text(concept.describe)[:100]
-                        print(f"\n对话记忆 {i+1}:")
-                        print(f"原始文本: {original_text}...")
-                        print(f"解码文本: {decoded_text}...")
-                    
-                    other_agents = self.extract_agents_from_text(concept.describe)
-                    chat_agents_found.update(other_agents)
-                    
-                    # 显示提取到的Agent（调试用）
-                    if i < 3 and other_agents:
-                        print(f"提取到的Agent: {other_agents}")
-                    
-                    for other_agent in other_agents:
-                        if other_agent != agent.name:
-                            G.add_node(other_agent)
-                            if G.has_edge(agent.name, other_agent):
-                                G[agent.name][other_agent]['weight'] += 1
-                                G[agent.name][other_agent]['chat_count'] += 1
-                            else:
-                                G.add_edge(agent.name, other_agent, 
-                                         weight=1, chat_count=1, event_count=0, type='chat')
+                # 使用Associate的向量检索功能
+                chat_nodes = agent.associate._retrieve_nodes('chat', query, top_k=10)
+                
+                for node in chat_nodes:
+                    if hasattr(node, 'text') and node.text:
+                        chat_memories_count += 1
+                        
+                        # 显示前几个记忆的内容（调试用）
+                        if chat_memories_count <= 3:
+                            original_text = node.text[:100]
+                            decoded_text = self.decode_text(node.text)[:100]
+                            print(f"\n对话记忆 {chat_memories_count} (查询: {query}):")
+                            print(f"原始文本: {original_text}...")
+                            print(f"解码文本: {decoded_text}...")
+                        
+                        other_agents = extractor.extract_agents_from_text(node.text)
+                        chat_agents_found.update(other_agents)
+                        
+                        # 显示提取到的Agent（调试用）
+                        if chat_memories_count <= 3 and other_agents:
+                            print(f"提取到的Agent: {other_agents}")
+                        
+                        for other_agent in other_agents:
+                            if other_agent != agent.name:
+                                G.add_node(other_agent)
+                                if G.has_edge(agent.name, other_agent):
+                                    G[agent.name][other_agent]['weight'] += 1
+                                    G[agent.name][other_agent]['chat_count'] += 1
+                                else:
+                                    G.add_edge(agent.name, other_agent, 
+                                             weight=1, chat_count=1, event_count=0, type='chat')
             except Exception as e:
-                print(f"处理chat节点 {chat_node_id} 时出错: {e}")
+                print(f"检索对话记忆时出错 (查询: {query}): {e}")
                 continue
         
-        # 从事件记忆中提取关系
+        # 使用向量检索获取事件相关的记忆
+        event_queries = [
+            "事件", "发生", "经历", "体验", "活动", "行为", "动作",
+            "event", "happen", "occur", "experience", "activity", "action"
+        ]
+        
         event_agents_found = set()
-        for i, event_node_id in enumerate(event_memories):
+        event_memories_count = 0
+        
+        for query in event_queries:
             try:
-                concept = agent.associate.find_concept(event_node_id)
-                if concept and concept.describe:
-                    # 显示前几个记忆的内容（调试用）
-                    if i < 3:
-                        original_text = concept.describe[:100]
-                        decoded_text = self.decode_text(concept.describe)[:100]
-                        print(f"\n事件记忆 {i+1}:")
-                        print(f"原始文本: {original_text}...")
-                        print(f"解码文本: {decoded_text}...")
-                    
-                    related_agents = self.extract_agents_from_text(concept.describe)
-                    event_agents_found.update(related_agents)
-                    
-                    # 显示提取到的Agent（调试用）
-                    if i < 3 and related_agents:
-                        print(f"提取到的Agent: {related_agents}")
-                    
-                    for related_agent in related_agents:
-                        if related_agent != agent.name:
-                            G.add_node(related_agent)
-                            if G.has_edge(agent.name, related_agent):
-                                G[agent.name][related_agent]['weight'] += 0.5  # 事件权重较低
-                                G[agent.name][related_agent]['event_count'] += 1
-                            else:
-                                G.add_edge(agent.name, related_agent, 
-                                         weight=0.5, chat_count=0, event_count=1, type='event')
+                # 使用Associate的向量检索功能
+                event_nodes = agent.associate._retrieve_nodes('event', query, top_k=10)
+                
+                for node in event_nodes:
+                    if hasattr(node, 'text') and node.text:
+                        event_memories_count += 1
+                        
+                        # 显示前几个记忆的内容（调试用）
+                        if event_memories_count <= 3:
+                            original_text = node.text[:100]
+                            decoded_text = self.decode_text(node.text)[:100]
+                            print(f"\n事件记忆 {event_memories_count} (查询: {query}):")
+                            print(f"原始文本: {original_text}...")
+                            print(f"解码文本: {decoded_text}...")
+                        
+                        related_agents = extractor.extract_agents_from_text(node.text)
+                        event_agents_found.update(related_agents)
+                        
+                        # 显示提取到的Agent（调试用）
+                        if event_memories_count <= 3 and related_agents:
+                            print(f"提取到的Agent: {related_agents}")
+                        
+                        for related_agent in related_agents:
+                            if related_agent != agent.name:
+                                G.add_node(related_agent)
+                                if G.has_edge(agent.name, related_agent):
+                                    G[agent.name][related_agent]['weight'] += 0.5  # 事件权重较低
+                                    G[agent.name][related_agent]['event_count'] += 1
+                                else:
+                                    G.add_edge(agent.name, related_agent, 
+                                             weight=0.5, chat_count=0, event_count=1, type='event')
             except Exception as e:
-                print(f"处理event节点 {event_node_id} 时出错: {e}")
+                print(f"检索事件记忆时出错 (查询: {query}): {e}")
                 continue
         
         # 调试信息：显示提取结果
         all_agents_found = chat_agents_found.union(event_agents_found)
         print(f"\n=== 提取结果统计 ===")
+        print(f"对话记忆检索次数: {chat_memories_count}")
+        print(f"事件记忆检索次数: {event_memories_count}")
         print(f"从对话记忆中提取到的Agent: {chat_agents_found}")
         print(f"从事件记忆中提取到的Agent: {event_agents_found}")
         print(f"总共提取到的Agent: {all_agents_found}")
@@ -245,6 +334,9 @@ class RealWorldGraphExtractor:
 
 class GraphDifferenceCalculator:
     """图差异计算器 - 计算两个图之间的各种差异度量"""
+    
+    def __init__(self, llm_model=None):
+        self.llm_model = llm_model
     
     def node_difference_metric(self, cognitive_graph: nx.Graph, real_graph: nx.Graph) -> Dict:
         """计算节点差异度量"""
@@ -322,6 +414,188 @@ class GraphDifferenceCalculator:
         
         return np.mean(weight_differences) if weight_differences else 0.0
     
+    def analyze_memory_reality_consistency_with_llm(self, agent_memories: List[str], 
+                                                   real_conversations: List[str]) -> Dict:
+        """使用LLM分析记忆与真实对话的一致性"""
+        if not self.llm_model:
+            print("未提供LLM模型，无法进行语义一致性分析")
+            return {'consistency_score': 0.0, 'analysis': '无LLM模型'}
+        
+        try:
+            # 构建分析提示词
+            memories_text = "\n".join([f"记忆{i+1}: {mem[:200]}" for i, mem in enumerate(agent_memories[:5])])
+            conversations_text = "\n".join([f"对话{i+1}: {conv[:200]}" for i, conv in enumerate(real_conversations[:5])])
+            
+            prompt = f"""请分析以下Agent的记忆内容与真实对话记录的一致性程度。
+
+**Agent记忆内容：**
+{memories_text}
+
+**真实对话记录：**
+{conversations_text}
+
+请从以下几个维度进行分析：
+1. 事实一致性：记忆中的事实是否与真实对话一致
+2. 情感一致性：记忆中的情感表达是否与真实对话一致
+3. 时间一致性：记忆中的时间顺序是否与真实对话一致
+4. 人物关系一致性：记忆中的人物关系是否与真实对话一致
+
+请给出一个0-1之间的一致性评分（1表示完全一致，0表示完全不一致），并简要说明理由。
+
+输出格式：
+一致性评分：[0.0-1.0]
+分析理由：[简要说明]"""
+            
+            # 调用LLM
+            response = self.llm_model.completion(prompt, temperature=0.1)
+            
+            if not response:
+                return {'consistency_score': 0.0, 'analysis': 'LLM响应为空'}
+            
+            # 解析LLM响应
+            consistency_score = self._extract_consistency_score(response)
+            analysis = self._extract_analysis_reason(response)
+            
+            return {
+                'consistency_score': consistency_score,
+                'analysis': analysis,
+                'llm_response': response
+            }
+            
+        except Exception as e:
+            print(f"LLM语义一致性分析时出错: {e}")
+            return {'consistency_score': 0.0, 'analysis': f'分析出错: {str(e)}'}
+    
+    def _extract_consistency_score(self, llm_response: str) -> float:
+        """从LLM响应中提取一致性评分"""
+        try:
+            import re
+            # 查找评分模式
+            score_patterns = [
+                r'一致性评分[：:](\d*\.?\d+)',
+                r'评分[：:](\d*\.?\d+)',
+                r'(\d*\.?\d+)分',
+                r'(0\.[0-9]+|1\.0|1|0)'
+            ]
+            
+            for pattern in score_patterns:
+                match = re.search(pattern, llm_response)
+                if match:
+                    score = float(match.group(1))
+                    return max(0.0, min(1.0, score))  # 确保在0-1范围内
+            
+            # 如果没有找到数字评分，尝试从文本中推断
+            if '完全一致' in llm_response or '高度一致' in llm_response:
+                return 0.9
+            elif '基本一致' in llm_response or '大部分一致' in llm_response:
+                return 0.7
+            elif '部分一致' in llm_response:
+                return 0.5
+            elif '不太一致' in llm_response:
+                return 0.3
+            elif '完全不一致' in llm_response:
+                return 0.1
+            
+            return 0.5  # 默认值
+            
+        except Exception as e:
+            print(f"提取一致性评分时出错: {e}")
+            return 0.0
+    
+    def _extract_analysis_reason(self, llm_response: str) -> str:
+        """从LLM响应中提取分析理由"""
+        try:
+            import re
+            # 查找分析理由
+            reason_patterns = [
+                r'分析理由[：:](.*?)(?=\n|$)',
+                r'理由[：:](.*?)(?=\n|$)',
+                r'说明[：:](.*?)(?=\n|$)'
+            ]
+            
+            for pattern in reason_patterns:
+                match = re.search(pattern, llm_response, re.DOTALL)
+                if match:
+                    return match.group(1).strip()
+            
+            # 如果没有找到特定格式，返回整个响应的简化版本
+            lines = llm_response.split('\n')
+            for line in lines:
+                if len(line.strip()) > 10 and '评分' not in line:
+                    return line.strip()[:200]  # 返回第一个有意义的行
+            
+            return llm_response[:200]  # 返回前200个字符
+            
+        except Exception as e:
+            print(f"提取分析理由时出错: {e}")
+            return "无法提取分析理由"
+    
+    def compare_interaction_patterns_with_llm(self, cognitive_interactions: Dict, 
+                                            real_interactions: Dict) -> Dict:
+        """使用LLM比较交互模式的相似性"""
+        if not self.llm_model:
+            return {'pattern_similarity': 0.0, 'analysis': '无LLM模型'}
+        
+        try:
+            # 构建交互模式描述
+            cognitive_desc = self._describe_interaction_patterns(cognitive_interactions)
+            real_desc = self._describe_interaction_patterns(real_interactions)
+            
+            prompt = f"""请比较以下两种交互模式的相似性：
+
+**Agent认知中的交互模式：**
+{cognitive_desc}
+
+**真实的交互模式：**
+{real_desc}
+
+请分析：
+1. 交互频率的相似性
+2. 交互对象的相似性
+3. 交互内容类型的相似性
+4. 交互时机的相似性
+
+请给出一个0-1之间的相似性评分（1表示完全相似，0表示完全不同），并简要说明理由。
+
+输出格式：
+相似性评分：[0.0-1.0]
+分析理由：[简要说明]"""
+            
+            response = self.llm_model.completion(prompt, temperature=0.1)
+            
+            if not response:
+                return {'pattern_similarity': 0.0, 'analysis': 'LLM响应为空'}
+            
+            similarity_score = self._extract_consistency_score(response)  # 复用评分提取方法
+            analysis = self._extract_analysis_reason(response)
+            
+            return {
+                'pattern_similarity': similarity_score,
+                'analysis': analysis,
+                'llm_response': response
+            }
+            
+        except Exception as e:
+            print(f"LLM交互模式比较时出错: {e}")
+            return {'pattern_similarity': 0.0, 'analysis': f'比较出错: {str(e)}'}
+    
+    def _describe_interaction_patterns(self, interactions: Dict) -> str:
+        """描述交互模式"""
+        if not interactions:
+            return "无交互记录"
+        
+        descriptions = []
+        for agent_pair, data in list(interactions.items())[:5]:  # 限制数量
+            if isinstance(data, dict):
+                weight = data.get('weight', 0)
+                chat_count = data.get('chat_count', 0)
+                event_count = data.get('event_count', 0)
+                descriptions.append(f"{agent_pair}: 权重{weight}, 对话{chat_count}次, 事件{event_count}次")
+            else:
+                descriptions.append(f"{agent_pair}: {data}")
+        
+        return "\n".join(descriptions)
+    
     def calculate_temporal_consistency(self, cognitive_graph: nx.Graph, real_graph: nx.Graph) -> float:
         """计算时间一致性 (简化版本，基于图的连通性)"""
         # 简化的时间一致性度量：基于图的连通性和密度
@@ -338,13 +612,14 @@ class GraphDifferenceCalculator:
 class CognitiveWorldGapAnalyzer:
     """认知世界差距分析器 - 主要分析类"""
     
-    def __init__(self, agents: Dict = None, conversation_data: Dict = None):
+    def __init__(self, agents: Dict = None, conversation_data: Dict = None, llm_model=None):
         self.agents = agents or {}
         self.conversation_data = conversation_data or {}
+        self.llm_model = llm_model
         
-        self.cognitive_extractor = CognitiveGraphExtractor()
+        self.cognitive_extractor = CognitiveGraphExtractor(llm_model=llm_model)
         self.real_world_extractor = RealWorldGraphExtractor()
-        self.diff_calculator = GraphDifferenceCalculator()
+        self.diff_calculator = GraphDifferenceCalculator(llm_model=llm_model)
         
         # 提取真实世界图
         self.real_world_graph = self.real_world_extractor.extract_real_world_graph(
@@ -448,6 +723,31 @@ class CognitiveWorldGapAnalyzer:
         # 计算差距度量
         gap_metrics = self.cognitive_world_gap_metric(cognitive_graph, real_subgraph)
         
+        # 使用LLM进行深度分析（如果可用）
+        llm_analysis = {}
+        if self.llm_model:
+            try:
+                # 分析记忆与真实对话的一致性
+                memory_consistency = self.diff_calculator.analyze_memory_reality_consistency_with_llm(
+                    agent, self.conversation_data
+                )
+                
+                # 分析交互模式的相似性
+                interaction_similarity = self.diff_calculator.compare_interaction_patterns_with_llm(
+                    cognitive_graph, real_subgraph
+                )
+                
+                llm_analysis = {
+                    'memory_consistency': memory_consistency,
+                    'interaction_similarity': interaction_similarity
+                }
+                
+                print(f"LLM分析完成 - Agent: {agent_name}")
+                
+            except Exception as e:
+                print(f"LLM分析失败 - Agent: {agent_name}, 错误: {str(e)}")
+                llm_analysis = {'error': str(e)}
+        
         return {
             'agent_name': agent_name,
             'cognitive_nodes': len(cognitive_graph.nodes()),
@@ -455,6 +755,7 @@ class CognitiveWorldGapAnalyzer:
             'real_nodes': len(real_subgraph.nodes()),
             'real_edges': len(real_subgraph.edges()),
             'gap_metrics': gap_metrics,
+            'llm_analysis': llm_analysis,
             'cognitive_graph_info': {
                 'nodes': list(cognitive_graph.nodes()),
                 'edges': [(u, v, d) for u, v, d in cognitive_graph.edges(data=True)]
@@ -614,6 +915,11 @@ def load_agent_from_storage(agent_name: str, storage_path: str, config: Dict = N
                     "retention": 8,
                     "max_memory": -1,
                     "max_importance": 10
+                },
+                "llm": {
+                    "type": "openai",
+                    "model": "gpt-4o-mini",
+                    "base_url": "https://yunwu.ai/v1"
                 },
                 "currently": agent_config.get("currently", f"{agent_name}正在思考"),
                 "scratch": agent_config.get("scratch", {
@@ -863,19 +1169,10 @@ def main():
     
     print(f"选择的agents: {', '.join(selected_agents)}")
     
-    # 3. 加载对话数据
-    conversation_path = f"results/checkpoints/{simulation_name}/conversation.json"
-    analyzer = CognitiveWorldGapAnalyzer()
-    
-    if not analyzer.load_conversation_data(conversation_path):
-        print(f"加载对话数据失败: {conversation_path}")
-        return
-    
-    print(f"成功加载对话数据: {conversation_path}")
-    
-    # 4. 加载agents
+    # 3. 加载agents
     print("\n正在加载agents...")
     loaded_agents = {}
+    llm_model = None
     
     for agent_name in selected_agents:
         storage_path = f"results/checkpoints/{simulation_name}/storage/{agent_name}"
@@ -884,6 +1181,18 @@ def main():
         if agent:
             loaded_agents[agent_name] = agent
             print(f"✓ 成功加载 {agent_name}")
+            
+            # 尝试获取LLM模型实例（从第一个成功加载的agent中获取）
+            if llm_model is None:
+                try:
+                    if hasattr(agent, 'llm') and agent.llm:
+                        llm_model = agent.llm
+                        print(f"✓ 从 {agent_name} 获取到LLM模型实例")
+                    elif hasattr(agent, 'llm_model') and agent.llm_model:
+                        llm_model = agent.llm_model
+                        print(f"✓ 从 {agent_name} 获取到LLM模型实例")
+                except Exception as e:
+                    print(f"从 {agent_name} 获取LLM模型失败: {str(e)}")
         else:
             print(f"✗ 加载 {agent_name} 失败")
     
@@ -891,7 +1200,20 @@ def main():
         print("没有成功加载任何agent，退出程序")
         return
     
-    analyzer.agents = loaded_agents
+    # 4. 加载对话数据并创建分析器
+    conversation_path = f"results/checkpoints/{simulation_name}/conversation.json"
+    analyzer = CognitiveWorldGapAnalyzer(agents=loaded_agents, llm_model=llm_model)
+    
+    if not analyzer.load_conversation_data(conversation_path):
+        print(f"加载对话数据失败: {conversation_path}")
+        return
+    
+    print(f"成功加载对话数据: {conversation_path}")
+    
+    if llm_model:
+        print("✓ LLM增强分析已启用")
+    else:
+        print("⚠ 未找到LLM模型，将使用传统分析方法")
     
     # 5. 生成分析报告
     print("\n正在生成认知差距分析报告...")
