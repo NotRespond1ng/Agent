@@ -125,7 +125,20 @@ class CognitiveGraphExtractor:
     def extract_agents_from_known_list(self, text: str) -> Set[str]:
         """从已知agent列表中查找在文本中出现的agent名称（推荐方法）"""
         found_agents = set()
+        print(f"    [extract_agents_from_known_list] 检查文本: '{text[:100]}...'")
+        print(f"    [extract_agents_from_known_list] known_agents 列表: {self.known_agents}")
         
+        for agent_name_to_find in self.known_agents:
+            # print(f"        试图查找 '{agent_name_to_find}'...")  # 调试单个名称
+            if agent_name_to_find in text:  # 直接字符串包含检查
+                # 对中文名，这通常足够
+                # 可以添加更复杂的边界检查，但简单的 'in' 应该能工作
+                found_agents.add(agent_name_to_find)
+                # print(f"        ✓ 找到 '{agent_name_to_find}' 通过 'in' 检查")
+            # else:
+                # print(f"        ✗ 未找到 '{agent_name_to_find}' 通过 'in' 检查")
+        
+        # 保留原有的边界检查逻辑作为备用
         for agent_name in self.known_agents:
             # 检查agent名称是否在文本中出现
             if agent_name in text:
@@ -138,6 +151,7 @@ class CognitiveGraphExtractor:
                 elif agent_name in text:  # 对于中文名称，边界检查可能不适用
                     found_agents.add(agent_name)
         
+        print(f"    [extract_agents_from_known_list] 从当前文本提取到的 agents: {found_agents}")
         return found_agents
     
     def extract_agents_with_regex(self, text: str) -> Set[str]:
@@ -207,7 +221,9 @@ class CognitiveGraphExtractor:
                             print(f"原始文本: {original_text}...")
                             print(f"解码文本: {decoded_text}...")
                         
+                        print(f"  [extract_cognitive_graph] 正在分析文本 (来自 node ID: {getattr(node, 'node_id', '未知ID')}): '{node.describe[:100]}...'")
                         other_agents = self.extract_agents_from_text(node.describe)
+                        print(f"  [extract_cognitive_graph] 从上述文本提取到的 other_agents: {other_agents}")
                         chat_agents_found.update(other_agents)
                         
                         # 显示提取到的Agent（调试用）
@@ -254,7 +270,9 @@ class CognitiveGraphExtractor:
                             print(f"原始文本: {original_text}...")
                             print(f"解码文本: {decoded_text}...")
                         
+                        print(f"  [extract_cognitive_graph] 正在分析事件文本 (来自 node ID: {getattr(node, 'node_id', '未知ID')}): '{node.describe[:100]}...'")
                         related_agents = self.extract_agents_from_text(node.describe)
+                        print(f"  [extract_cognitive_graph] 从上述事件文本提取到的 related_agents: {related_agents}")
                         event_agents_found.update(related_agents)
                         
                         # 显示提取到的Agent（调试用）
@@ -1360,7 +1378,7 @@ def select_agents(simulation_name: str) -> Optional[List[str]]:
     # 用户选择
     while True:
         try:
-            choice = input(f"\n请选择要分析的agent (1-{len(agents) + 1}) 或输入 'q' 退出: ").strip()
+            choice = input(f"\n选择要分析的agent (1-{len(agents) + 1}) 或输入 'q' 退出: ").strip()
             if choice.lower() == 'q':
                 return None
             
