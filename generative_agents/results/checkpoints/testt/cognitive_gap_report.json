@@ -1,16 +1,16 @@
 {
   "summary": {
-    "total_agents": 11,
-    "analyzed_agents": 11,
-    "average_cognitive_gap": 0.881818181818182,
-    "std_cognitive_gap": 0.024052284646041755,
+    "total_agents": 1,
+    "analyzed_agents": 1,
+    "average_cognitive_gap": 0.17142857142857149,
+    "std_cognitive_gap": 0.0,
     "max_gap_agent": {
-      "name": "山姆",
-      "gap": 0.9
+      "name": "拉托亚",
+      "gap": 0.17142857142857149
     },
     "min_gap_agent": {
       "name": "拉托亚",
-      "gap": 0.85
+      "gap": 0.17142857142857149
     },
     "real_world_graph_info": {
       "total_nodes": 11,
@@ -21,52 +21,69 @@
   "detailed_results": {
     "拉托亚": {
       "agent_name": "拉托亚",
-      "cognitive_nodes": 1,
-      "cognitive_edges": 0,
+      "cognitive_nodes": 2,
+      "cognitive_edges": 1,
       "real_nodes": 2,
       "real_edges": 1,
       "gap_metrics": {
-        "cognitive_gap": 0.85,
-        "overall_score": 0.15,
-        "node_structure_score": 0.5,
-        "edge_structure_score": 0.0,
-        "semantic_accuracy": 0.0,
-        "temporal_consistency": 0,
+        "cognitive_gap": 0.17142857142857149,
+        "overall_score": 0.8285714285714285,
+        "node_structure_score": 1.0,
+        "edge_structure_score": 1.0,
+        "semantic_accuracy": 0.1428571428571429,
+        "temporal_consistency": 1.0,
         "detailed_metrics": {
           "nodes": {
-            "node_count_diff": 1,
-            "jaccard_similarity": 0.5,
-            "missing_nodes_count": 1,
+            "node_count_diff": 0,
+            "jaccard_similarity": 1.0,
+            "missing_nodes_count": 0,
             "hallucinated_nodes_count": 0,
-            "missing_nodes": [
-              "弗朗西斯科"
-            ],
+            "missing_nodes": [],
             "hallucinated_nodes": [],
-            "cognitive_nodes_count": 1,
+            "cognitive_nodes_count": 2,
             "real_nodes_count": 2
           },
           "edges": {
-            "edge_count_diff": 1,
-            "edge_jaccard_similarity": 0.0,
-            "missing_edges_count": 1,
+            "edge_count_diff": 0,
+            "edge_jaccard_similarity": 1.0,
+            "missing_edges_count": 0,
             "hallucinated_edges_count": 0,
-            "missing_edges": [
-              [
-                "拉托亚",
-                "弗朗西斯科"
-              ]
-            ],
+            "missing_edges": [],
             "hallucinated_edges": [],
-            "cognitive_edges_count": 0,
+            "cognitive_edges_count": 1,
             "real_edges_count": 1
           }
         }
       },
+      "llm_analysis": {
+        "memory_consistency": {
+          "consistency_score": 0.0,
+          "analysis": "由于没有提供Agent的记忆内容，无法进行任何事实、情感、时间或人物关系的一致性分析。因此，无法判断Agent的记忆与真实对话记录之间的关系，评分为0.0。",
+          "llm_response": "一致性评分：0.0  \n分析理由：由于没有提供Agent的记忆内容，无法进行任何事实、情感、时间或人物关系的一致性分析。因此，无法判断Agent的记忆与真实对话记录之间的关系，评分为0.0。"
+        },
+        "interaction_similarity": {
+          "pattern_similarity": 0.3,
+          "analysis": "",
+          "llm_response": "相似性评分：0.3  \n分析理由：  \n1. **交互频率的相似性**：Agent认知中的交互模式有14次对话，而真实的交互模式没有对话记录，这表明交互频率差异显著，因此相似性较低。  \n2. **交互对象的相似性**：两者均涉及同一交互对象“拉托亚-弗朗西斯科”，这在一定程度上表明对象的一致性，增加了相似性。  \n3. **交互内容类型的相似性**：Agent认知中有14次对话记录，而真实模式没有对话和事件记录，内容类型的缺失导致相似性降低。  \n4. **交互时机的相似性**：由于真实模式没有任何交互记录，无法判断交互时机的相似性，因此这一点对整体相似性评分影响较大。  \n\n综合考虑以上因素，尽管交互对象相同，但频率和内容类型的差异使得整体相似性较低。"
+        }
+      },
       "cognitive_graph_info": {
         "nodes": [
-          "拉托亚"
+          "拉托亚",
+          "弗朗西斯科"
         ],
-        "edges": []
+        "edges": [
+          [
+            "拉托亚",
+            "弗朗西斯科",
+            {
+              "weight": 14,
+              "chat_count": 14,
+              "event_count": 0,
+              "type": "chat"
+            }
+          ]
+        ]
       },
       "real_graph_info": {
         "nodes": [
@@ -80,800 +97,6 @@
             {
               "weight": 2,
               "interaction_count": 1
-            }
-          ]
-        ]
-      }
-    },
-    "山姆": {
-      "agent_name": "山姆",
-      "cognitive_nodes": 1,
-      "cognitive_edges": 0,
-      "real_nodes": 3,
-      "real_edges": 3,
-      "gap_metrics": {
-        "cognitive_gap": 0.9,
-        "overall_score": 0.09999999999999999,
-        "node_structure_score": 0.3333333333333333,
-        "edge_structure_score": 0.0,
-        "semantic_accuracy": 0.0,
-        "temporal_consistency": 0,
-        "detailed_metrics": {
-          "nodes": {
-            "node_count_diff": 2,
-            "jaccard_similarity": 0.3333333333333333,
-            "missing_nodes_count": 2,
-            "hallucinated_nodes_count": 0,
-            "missing_nodes": [
-              "詹妮弗",
-              "卡门"
-            ],
-            "hallucinated_nodes": [],
-            "cognitive_nodes_count": 1,
-            "real_nodes_count": 3
-          },
-          "edges": {
-            "edge_count_diff": 3,
-            "edge_jaccard_similarity": 0.0,
-            "missing_edges_count": 3,
-            "hallucinated_edges_count": 0,
-            "missing_edges": [
-              [
-                "詹妮弗",
-                "卡门"
-              ],
-              [
-                "山姆",
-                "卡门"
-              ],
-              [
-                "詹妮弗",
-                "山姆"
-              ]
-            ],
-            "hallucinated_edges": [],
-            "cognitive_edges_count": 0,
-            "real_edges_count": 3
-          }
-        }
-      },
-      "cognitive_graph_info": {
-        "nodes": [
-          "山姆"
-        ],
-        "edges": []
-      },
-      "real_graph_info": {
-        "nodes": [
-          "詹妮弗",
-          "山姆",
-          "卡门"
-        ],
-        "edges": [
-          [
-            "詹妮弗",
-            "山姆",
-            {
-              "weight": 6,
-              "interaction_count": 3
-            }
-          ],
-          [
-            "詹妮弗",
-            "卡门",
-            {
-              "weight": 2,
-              "interaction_count": 1
-            }
-          ],
-          [
-            "山姆",
-            "卡门",
-            {
-              "weight": 2,
-              "interaction_count": 1
-            }
-          ]
-        ]
-      }
-    },
-    "塔玛拉": {
-      "agent_name": "塔玛拉",
-      "cognitive_nodes": 1,
-      "cognitive_edges": 0,
-      "real_nodes": 2,
-      "real_edges": 1,
-      "gap_metrics": {
-        "cognitive_gap": 0.85,
-        "overall_score": 0.15,
-        "node_structure_score": 0.5,
-        "edge_structure_score": 0.0,
-        "semantic_accuracy": 0.0,
-        "temporal_consistency": 0,
-        "detailed_metrics": {
-          "nodes": {
-            "node_count_diff": 1,
-            "jaccard_similarity": 0.5,
-            "missing_nodes_count": 1,
-            "hallucinated_nodes_count": 0,
-            "missing_nodes": [
-              "埃迪"
-            ],
-            "hallucinated_nodes": [],
-            "cognitive_nodes_count": 1,
-            "real_nodes_count": 2
-          },
-          "edges": {
-            "edge_count_diff": 1,
-            "edge_jaccard_similarity": 0.0,
-            "missing_edges_count": 1,
-            "hallucinated_edges_count": 0,
-            "missing_edges": [
-              [
-                "埃迪",
-                "塔玛拉"
-              ]
-            ],
-            "hallucinated_edges": [],
-            "cognitive_edges_count": 0,
-            "real_edges_count": 1
-          }
-        }
-      },
-      "cognitive_graph_info": {
-        "nodes": [
-          "塔玛拉"
-        ],
-        "edges": []
-      },
-      "real_graph_info": {
-        "nodes": [
-          "埃迪",
-          "塔玛拉"
-        ],
-        "edges": [
-          [
-            "埃迪",
-            "塔玛拉",
-            {
-              "weight": 4,
-              "interaction_count": 2
-            }
-          ]
-        ]
-      }
-    },
-    "海莉": {
-      "agent_name": "海莉",
-      "cognitive_nodes": 1,
-      "cognitive_edges": 0,
-      "real_nodes": 3,
-      "real_edges": 2,
-      "gap_metrics": {
-        "cognitive_gap": 0.9,
-        "overall_score": 0.09999999999999999,
-        "node_structure_score": 0.3333333333333333,
-        "edge_structure_score": 0.0,
-        "semantic_accuracy": 0.0,
-        "temporal_consistency": 0,
-        "detailed_metrics": {
-          "nodes": {
-            "node_count_diff": 2,
-            "jaccard_similarity": 0.3333333333333333,
-            "missing_nodes_count": 2,
-            "hallucinated_nodes_count": 0,
-            "missing_nodes": [
-              "弗朗西斯科",
-              "拉吉夫"
-            ],
-            "hallucinated_nodes": [],
-            "cognitive_nodes_count": 1,
-            "real_nodes_count": 3
-          },
-          "edges": {
-            "edge_count_diff": 2,
-            "edge_jaccard_similarity": 0.0,
-            "missing_edges_count": 2,
-            "hallucinated_edges_count": 0,
-            "missing_edges": [
-              [
-                "弗朗西斯科",
-                "海莉"
-              ],
-              [
-                "海莉",
-                "拉吉夫"
-              ]
-            ],
-            "hallucinated_edges": [],
-            "cognitive_edges_count": 0,
-            "real_edges_count": 2
-          }
-        }
-      },
-      "cognitive_graph_info": {
-        "nodes": [
-          "海莉"
-        ],
-        "edges": []
-      },
-      "real_graph_info": {
-        "nodes": [
-          "弗朗西斯科",
-          "海莉",
-          "拉吉夫"
-        ],
-        "edges": [
-          [
-            "弗朗西斯科",
-            "海莉",
-            {
-              "weight": 3,
-              "interaction_count": 1
-            }
-          ],
-          [
-            "海莉",
-            "拉吉夫",
-            {
-              "weight": 2,
-              "interaction_count": 1
-            }
-          ]
-        ]
-      }
-    },
-    "拉吉夫": {
-      "agent_name": "拉吉夫",
-      "cognitive_nodes": 1,
-      "cognitive_edges": 0,
-      "real_nodes": 2,
-      "real_edges": 1,
-      "gap_metrics": {
-        "cognitive_gap": 0.85,
-        "overall_score": 0.15,
-        "node_structure_score": 0.5,
-        "edge_structure_score": 0.0,
-        "semantic_accuracy": 0.0,
-        "temporal_consistency": 0,
-        "detailed_metrics": {
-          "nodes": {
-            "node_count_diff": 1,
-            "jaccard_similarity": 0.5,
-            "missing_nodes_count": 1,
-            "hallucinated_nodes_count": 0,
-            "missing_nodes": [
-              "海莉"
-            ],
-            "hallucinated_nodes": [],
-            "cognitive_nodes_count": 1,
-            "real_nodes_count": 2
-          },
-          "edges": {
-            "edge_count_diff": 1,
-            "edge_jaccard_similarity": 0.0,
-            "missing_edges_count": 1,
-            "hallucinated_edges_count": 0,
-            "missing_edges": [
-              [
-                "海莉",
-                "拉吉夫"
-              ]
-            ],
-            "hallucinated_edges": [],
-            "cognitive_edges_count": 0,
-            "real_edges_count": 1
-          }
-        }
-      },
-      "cognitive_graph_info": {
-        "nodes": [
-          "拉吉夫"
-        ],
-        "edges": []
-      },
-      "real_graph_info": {
-        "nodes": [
-          "海莉",
-          "拉吉夫"
-        ],
-        "edges": [
-          [
-            "海莉",
-            "拉吉夫",
-            {
-              "weight": 2,
-              "interaction_count": 1
-            }
-          ]
-        ]
-      }
-    },
-    "卡门": {
-      "agent_name": "卡门",
-      "cognitive_nodes": 1,
-      "cognitive_edges": 0,
-      "real_nodes": 3,
-      "real_edges": 3,
-      "gap_metrics": {
-        "cognitive_gap": 0.9,
-        "overall_score": 0.09999999999999999,
-        "node_structure_score": 0.3333333333333333,
-        "edge_structure_score": 0.0,
-        "semantic_accuracy": 0.0,
-        "temporal_consistency": 0,
-        "detailed_metrics": {
-          "nodes": {
-            "node_count_diff": 2,
-            "jaccard_similarity": 0.3333333333333333,
-            "missing_nodes_count": 2,
-            "hallucinated_nodes_count": 0,
-            "missing_nodes": [
-              "詹妮弗",
-              "山姆"
-            ],
-            "hallucinated_nodes": [],
-            "cognitive_nodes_count": 1,
-            "real_nodes_count": 3
-          },
-          "edges": {
-            "edge_count_diff": 3,
-            "edge_jaccard_similarity": 0.0,
-            "missing_edges_count": 3,
-            "hallucinated_edges_count": 0,
-            "missing_edges": [
-              [
-                "詹妮弗",
-                "卡门"
-              ],
-              [
-                "山姆",
-                "卡门"
-              ],
-              [
-                "詹妮弗",
-                "山姆"
-              ]
-            ],
-            "hallucinated_edges": [],
-            "cognitive_edges_count": 0,
-            "real_edges_count": 3
-          }
-        }
-      },
-      "cognitive_graph_info": {
-        "nodes": [
-          "卡门"
-        ],
-        "edges": []
-      },
-      "real_graph_info": {
-        "nodes": [
-          "詹妮弗",
-          "山姆",
-          "卡门"
-        ],
-        "edges": [
-          [
-            "詹妮弗",
-            "山姆",
-            {
-              "weight": 6,
-              "interaction_count": 3
-            }
-          ],
-          [
-            "詹妮弗",
-            "卡门",
-            {
-              "weight": 2,
-              "interaction_count": 1
-            }
-          ],
-          [
-            "山姆",
-            "卡门",
-            {
-              "weight": 2,
-              "interaction_count": 1
-            }
-          ]
-        ]
-      }
-    },
-    "詹妮弗": {
-      "agent_name": "詹妮弗",
-      "cognitive_nodes": 1,
-      "cognitive_edges": 0,
-      "real_nodes": 3,
-      "real_edges": 3,
-      "gap_metrics": {
-        "cognitive_gap": 0.9,
-        "overall_score": 0.09999999999999999,
-        "node_structure_score": 0.3333333333333333,
-        "edge_structure_score": 0.0,
-        "semantic_accuracy": 0.0,
-        "temporal_consistency": 0,
-        "detailed_metrics": {
-          "nodes": {
-            "node_count_diff": 2,
-            "jaccard_similarity": 0.3333333333333333,
-            "missing_nodes_count": 2,
-            "hallucinated_nodes_count": 0,
-            "missing_nodes": [
-              "山姆",
-              "卡门"
-            ],
-            "hallucinated_nodes": [],
-            "cognitive_nodes_count": 1,
-            "real_nodes_count": 3
-          },
-          "edges": {
-            "edge_count_diff": 3,
-            "edge_jaccard_similarity": 0.0,
-            "missing_edges_count": 3,
-            "hallucinated_edges_count": 0,
-            "missing_edges": [
-              [
-                "詹妮弗",
-                "卡门"
-              ],
-              [
-                "山姆",
-                "卡门"
-              ],
-              [
-                "詹妮弗",
-                "山姆"
-              ]
-            ],
-            "hallucinated_edges": [],
-            "cognitive_edges_count": 0,
-            "real_edges_count": 3
-          }
-        }
-      },
-      "cognitive_graph_info": {
-        "nodes": [
-          "詹妮弗"
-        ],
-        "edges": []
-      },
-      "real_graph_info": {
-        "nodes": [
-          "詹妮弗",
-          "山姆",
-          "卡门"
-        ],
-        "edges": [
-          [
-            "詹妮弗",
-            "山姆",
-            {
-              "weight": 6,
-              "interaction_count": 3
-            }
-          ],
-          [
-            "詹妮弗",
-            "卡门",
-            {
-              "weight": 2,
-              "interaction_count": 1
-            }
-          ],
-          [
-            "山姆",
-            "卡门",
-            {
-              "weight": 2,
-              "interaction_count": 1
-            }
-          ]
-        ]
-      }
-    },
-    "弗朗西斯科": {
-      "agent_name": "弗朗西斯科",
-      "cognitive_nodes": 1,
-      "cognitive_edges": 0,
-      "real_nodes": 3,
-      "real_edges": 2,
-      "gap_metrics": {
-        "cognitive_gap": 0.9,
-        "overall_score": 0.09999999999999999,
-        "node_structure_score": 0.3333333333333333,
-        "edge_structure_score": 0.0,
-        "semantic_accuracy": 0.0,
-        "temporal_consistency": 0,
-        "detailed_metrics": {
-          "nodes": {
-            "node_count_diff": 2,
-            "jaccard_similarity": 0.3333333333333333,
-            "missing_nodes_count": 2,
-            "hallucinated_nodes_count": 0,
-            "missing_nodes": [
-              "拉托亚",
-              "海莉"
-            ],
-            "hallucinated_nodes": [],
-            "cognitive_nodes_count": 1,
-            "real_nodes_count": 3
-          },
-          "edges": {
-            "edge_count_diff": 2,
-            "edge_jaccard_similarity": 0.0,
-            "missing_edges_count": 2,
-            "hallucinated_edges_count": 0,
-            "missing_edges": [
-              [
-                "拉托亚",
-                "弗朗西斯科"
-              ],
-              [
-                "弗朗西斯科",
-                "海莉"
-              ]
-            ],
-            "hallucinated_edges": [],
-            "cognitive_edges_count": 0,
-            "real_edges_count": 2
-          }
-        }
-      },
-      "cognitive_graph_info": {
-        "nodes": [
-          "弗朗西斯科"
-        ],
-        "edges": []
-      },
-      "real_graph_info": {
-        "nodes": [
-          "拉托亚",
-          "弗朗西斯科",
-          "海莉"
-        ],
-        "edges": [
-          [
-            "拉托亚",
-            "弗朗西斯科",
-            {
-              "weight": 2,
-              "interaction_count": 1
-            }
-          ],
-          [
-            "弗朗西斯科",
-            "海莉",
-            {
-              "weight": 3,
-              "interaction_count": 1
-            }
-          ]
-        ]
-      }
-    },
-    "梅": {
-      "agent_name": "梅",
-      "cognitive_nodes": 1,
-      "cognitive_edges": 0,
-      "real_nodes": 3,
-      "real_edges": 2,
-      "gap_metrics": {
-        "cognitive_gap": 0.9,
-        "overall_score": 0.09999999999999999,
-        "node_structure_score": 0.3333333333333333,
-        "edge_structure_score": 0.0,
-        "semantic_accuracy": 0.0,
-        "temporal_consistency": 0,
-        "detailed_metrics": {
-          "nodes": {
-            "node_count_diff": 2,
-            "jaccard_similarity": 0.3333333333333333,
-            "missing_nodes_count": 2,
-            "hallucinated_nodes_count": 0,
-            "missing_nodes": [
-              "约翰",
-              "埃迪"
-            ],
-            "hallucinated_nodes": [],
-            "cognitive_nodes_count": 1,
-            "real_nodes_count": 3
-          },
-          "edges": {
-            "edge_count_diff": 2,
-            "edge_jaccard_similarity": 0.0,
-            "missing_edges_count": 2,
-            "hallucinated_edges_count": 0,
-            "missing_edges": [
-              [
-                "约翰",
-                "梅"
-              ],
-              [
-                "埃迪",
-                "梅"
-              ]
-            ],
-            "hallucinated_edges": [],
-            "cognitive_edges_count": 0,
-            "real_edges_count": 2
-          }
-        }
-      },
-      "cognitive_graph_info": {
-        "nodes": [
-          "梅"
-        ],
-        "edges": []
-      },
-      "real_graph_info": {
-        "nodes": [
-          "约翰",
-          "埃迪",
-          "梅"
-        ],
-        "edges": [
-          [
-            "约翰",
-            "梅",
-            {
-              "weight": 2,
-              "interaction_count": 1
-            }
-          ],
-          [
-            "埃迪",
-            "梅",
-            {
-              "weight": 9,
-              "interaction_count": 4
-            }
-          ]
-        ]
-      }
-    },
-    "约翰": {
-      "agent_name": "约翰",
-      "cognitive_nodes": 1,
-      "cognitive_edges": 0,
-      "real_nodes": 2,
-      "real_edges": 1,
-      "gap_metrics": {
-        "cognitive_gap": 0.85,
-        "overall_score": 0.15,
-        "node_structure_score": 0.5,
-        "edge_structure_score": 0.0,
-        "semantic_accuracy": 0.0,
-        "temporal_consistency": 0,
-        "detailed_metrics": {
-          "nodes": {
-            "node_count_diff": 1,
-            "jaccard_similarity": 0.5,
-            "missing_nodes_count": 1,
-            "hallucinated_nodes_count": 0,
-            "missing_nodes": [
-              "梅"
-            ],
-            "hallucinated_nodes": [],
-            "cognitive_nodes_count": 1,
-            "real_nodes_count": 2
-          },
-          "edges": {
-            "edge_count_diff": 1,
-            "edge_jaccard_similarity": 0.0,
-            "missing_edges_count": 1,
-            "hallucinated_edges_count": 0,
-            "missing_edges": [
-              [
-                "约翰",
-                "梅"
-              ]
-            ],
-            "hallucinated_edges": [],
-            "cognitive_edges_count": 0,
-            "real_edges_count": 1
-          }
-        }
-      },
-      "cognitive_graph_info": {
-        "nodes": [
-          "约翰"
-        ],
-        "edges": []
-      },
-      "real_graph_info": {
-        "nodes": [
-          "约翰",
-          "梅"
-        ],
-        "edges": [
-          [
-            "约翰",
-            "梅",
-            {
-              "weight": 2,
-              "interaction_count": 1
-            }
-          ]
-        ]
-      }
-    },
-    "埃迪": {
-      "agent_name": "埃迪",
-      "cognitive_nodes": 1,
-      "cognitive_edges": 0,
-      "real_nodes": 3,
-      "real_edges": 2,
-      "gap_metrics": {
-        "cognitive_gap": 0.9,
-        "overall_score": 0.09999999999999999,
-        "node_structure_score": 0.3333333333333333,
-        "edge_structure_score": 0.0,
-        "semantic_accuracy": 0.0,
-        "temporal_consistency": 0,
-        "detailed_metrics": {
-          "nodes": {
-            "node_count_diff": 2,
-            "jaccard_similarity": 0.3333333333333333,
-            "missing_nodes_count": 2,
-            "hallucinated_nodes_count": 0,
-            "missing_nodes": [
-              "梅",
-              "塔玛拉"
-            ],
-            "hallucinated_nodes": [],
-            "cognitive_nodes_count": 1,
-            "real_nodes_count": 3
-          },
-          "edges": {
-            "edge_count_diff": 2,
-            "edge_jaccard_similarity": 0.0,
-            "missing_edges_count": 2,
-            "hallucinated_edges_count": 0,
-            "missing_edges": [
-              [
-                "埃迪",
-                "塔玛拉"
-              ],
-              [
-                "埃迪",
-                "梅"
-              ]
-            ],
-            "hallucinated_edges": [],
-            "cognitive_edges_count": 0,
-            "real_edges_count": 2
-          }
-        }
-      },
-      "cognitive_graph_info": {
-        "nodes": [
-          "埃迪"
-        ],
-        "edges": []
-      },
-      "real_graph_info": {
-        "nodes": [
-          "埃迪",
-          "梅",
-          "塔玛拉"
-        ],
-        "edges": [
-          [
-            "埃迪",
-            "梅",
-            {
-              "weight": 9,
-              "interaction_count": 4
-            }
-          ],
-          [
-            "埃迪",
-            "塔玛拉",
-            {
-              "weight": 4,
-              "interaction_count": 2
             }
           ]
         ]
