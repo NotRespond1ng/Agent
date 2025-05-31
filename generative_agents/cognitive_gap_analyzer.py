@@ -174,24 +174,11 @@ class CognitiveGraphExtractor:
             print(f"初始化Agent记忆时出错: {e}")
             print(f"错误详情: {traceback.format_exc()}")
         
-        # 获取LLM模型实例（如果agent有的话）
-        llm_model = None
-        try:
-            # 尝试从agent的_llm属性中获取LLM模型（正确的属性名）
-            if hasattr(agent, '_llm') and agent._llm and agent.llm_available():
-                llm_model = agent._llm
-                print(f"成功获取到Agent的LLM模型: {type(llm_model)}")
-            else:
-                print("未找到LLM模型实例，将使用传统的正则表达式方法")
-                print(f"Agent LLM可用性: {agent.llm_available() if hasattr(agent, 'llm_available') else 'N/A'}")
-                if hasattr(agent, '_llm'):
-                    print(f"Agent._llm: {agent._llm}")
-        except Exception as e:
-            print(f"获取LLM模型时出错: {e}，将使用传统方法")
-            print(f"错误详情: {traceback.format_exc()}")
-        
-        # 创建认知图提取器，传入LLM模型
-        extractor = CognitiveGraphExtractor(llm_model=llm_model)
+        # 使用类级别的LLM模型实例进行分析
+        if self.llm_model:
+            print(f"使用独立LLM模型进行分析: {type(self.llm_model)}")
+        else:
+            print(f"未提供LLM模型，将使用传统的正则表达式方法")
         
         # 使用向量检索获取对话相关的记忆
         chat_queries = [
@@ -219,7 +206,7 @@ class CognitiveGraphExtractor:
                             print(f"原始文本: {original_text}...")
                             print(f"解码文本: {decoded_text}...")
                         
-                        other_agents = extractor.extract_agents_from_text(node.text)
+                        other_agents = self.extract_agents_from_text(node.text)
                         chat_agents_found.update(other_agents)
                         
                         # 显示提取到的Agent（调试用）
@@ -265,7 +252,7 @@ class CognitiveGraphExtractor:
                             print(f"原始文本: {original_text}...")
                             print(f"解码文本: {decoded_text}...")
                         
-                        related_agents = extractor.extract_agents_from_text(node.text)
+                        related_agents = self.extract_agents_from_text(node.text)
                         event_agents_found.update(related_agents)
                         
                         # 显示提取到的Agent（调试用）
@@ -750,6 +737,7 @@ class CognitiveWorldGapAnalyzer:
         # 如果没有提供known_agents，从agents字典中提取agent名称
         if known_agents is None and agents:
             known_agents = list(agents.keys())
+        self.known_agents = known_agents
         
         self.cognitive_extractor = CognitiveGraphExtractor(known_agents=known_agents, llm_model=llm_model)
         self.real_world_extractor = RealWorldGraphExtractor()
