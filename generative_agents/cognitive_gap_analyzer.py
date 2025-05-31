@@ -27,18 +27,64 @@ class CognitiveGraphExtractor:
     def __init__(self):
         self.agent_name_pattern = re.compile(r'[\u4e00-\u9fff]+|[A-Za-z]+')  # 匹配中文名或英文名
     
+    def decode_text(self, text: str) -> str:
+        """解码可能包含Unicode转义序列的文本"""
+        if not text:
+            return text
+            
+        try:
+            # 处理Unicode转义序列
+            if '\\u' in text:
+                # 先尝试直接解码
+                decoded = text.encode().decode('unicode_escape')
+                return decoded
+            return text
+        except Exception as e:
+            print(f"解码文本时出错: {e}, 原文本: {text[:100]}...")
+            return text
+    
+    def validate_agent_name(self, name: str, context: str) -> bool:
+        """验证提取的名称是否真的是Agent名称"""
+        if len(name) < 2 or len(name) > 10:  # 名称长度合理性检查
+            return False
+            
+        # 检查是否在对话上下文中出现
+        dialogue_indicators = ['说', '问', '回答', '告诉', '聊天', '对话', '交谈', 
+                              'said', 'asked', 'replied', 'told', 'chat', 'talk']
+        
+        # 在上下文中查找名称周围是否有对话指示词
+        name_index = context.find(name)
+        if name_index != -1:
+            # 检查名称前后的文本
+            start = max(0, name_index - 20)
+            end = min(len(context), name_index + len(name) + 20)
+            surrounding_text = context[start:end]
+            
+            for indicator in dialogue_indicators:
+                if indicator in surrounding_text:
+                    return True
+        
+        return False
+    
     def extract_agents_from_text(self, text: str) -> Set[str]:
         """从文本中提取agent名称"""
+        # 首先解码文本
+        decoded_text = self.decode_text(text)
+        
         # 常见的agent名称模式
-        potential_names = self.agent_name_pattern.findall(text)
+        potential_names = self.agent_name_pattern.findall(decoded_text)
         
         # 过滤掉常见的非名称词汇
-        common_words = {'正在', '此时', '对话', '聊天', '说话', '交谈', '讨论', '谈论', 
-                       'is', 'was', 'are', 'were', 'the', 'and', 'or', 'but', 'chat', 'talk'}
+        common_words = {'正在', '此时', '对话', '聊天', '说话', '交谈', '讨论', '谈论', '回答', '告诉',
+                       '现在', '今天', '昨天', '明天', '时候', '地方', '房间', '家里', '外面', '里面',
+                       'is', 'was', 'are', 'were', 'the', 'and', 'or', 'but', 'chat', 'talk',
+                       'said', 'asked', 'replied', 'told', 'now', 'today', 'yesterday', 'tomorrow'}
         
         agent_names = set()
         for name in potential_names:
-            if len(name) >= 2 and name not in common_words:
+            if (len(name) >= 2 and 
+                name not in common_words and 
+                self.validate_agent_name(name, decoded_text)):
                 agent_names.add(name)
         
         return agent_names
@@ -48,43 +94,89 @@ class CognitiveGraphExtractor:
         G = nx.Graph()
         G.add_node(agent.name)  # 添加自己作为中心节点
         
+        # 调试信息：显示记忆统计
+        chat_memories = agent.associate.memory.get('chat', [])
+        event_memories = agent.associate.memory.get('event', [])
+        print(f"\n=== {agent.name} 记忆统计 ===")
+        print(f"对话记忆数量: {len(chat_memories)}")
+        print(f"事件记忆数量: {len(event_memories)}")
+        
         # 从对话记忆中提取关系
-        for chat_node_id in agent.associate.memory.get('chat', []):
+        chat_agents_found = set()
+        for i, chat_node_id in enumerate(chat_memories):
             try:
                 concept = agent.associate.find_concept(chat_node_id)
-                other_agents = self.extract_agents_from_text(concept.describe)
-                
-                for other_agent in other_agents:
-                    if other_agent != agent.name:
-                        G.add_node(other_agent)
-                        if G.has_edge(agent.name, other_agent):
-                            G[agent.name][other_agent]['weight'] += 1
-                            G[agent.name][other_agent]['chat_count'] += 1
-                        else:
-                            G.add_edge(agent.name, other_agent, 
-                                     weight=1, chat_count=1, event_count=0, type='chat')
+                if concept and concept.describe:
+                    # 显示前几个记忆的内容（调试用）
+                    if i < 3:
+                        original_text = concept.describe[:100]
+                        decoded_text = self.decode_text(concept.describe)[:100]
+                        print(f"\n对话记忆 {i+1}:")
+                        print(f"原始文本: {original_text}...")
+                        print(f"解码文本: {decoded_text}...")
+                    
+                    other_agents = self.extract_agents_from_text(concept.describe)
+                    chat_agents_found.update(other_agents)
+                    
+                    # 显示提取到的Agent（调试用）
+                    if i < 3 and other_agents:
+                        print(f"提取到的Agent: {other_agents}")
+                    
+                    for other_agent in other_agents:
+                        if other_agent != agent.name:
+                            G.add_node(other_agent)
+                            if G.has_edge(agent.name, other_agent):
+                                G[agent.name][other_agent]['weight'] += 1
+                                G[agent.name][other_agent]['chat_count'] += 1
+                            else:
+                                G.add_edge(agent.name, other_agent, 
+                                         weight=1, chat_count=1, event_count=0, type='chat')
             except Exception as e:
                 print(f"处理chat节点 {chat_node_id} 时出错: {e}")
                 continue
         
         # 从事件记忆中提取关系
-        for event_node_id in agent.associate.memory.get('event', []):
+        event_agents_found = set()
+        for i, event_node_id in enumerate(event_memories):
             try:
                 concept = agent.associate.find_concept(event_node_id)
-                related_agents = self.extract_agents_from_text(concept.describe)
-                
-                for related_agent in related_agents:
-                    if related_agent != agent.name:
-                        G.add_node(related_agent)
-                        if G.has_edge(agent.name, related_agent):
-                            G[agent.name][related_agent]['weight'] += 0.5  # 事件权重较低
-                            G[agent.name][related_agent]['event_count'] += 1
-                        else:
-                            G.add_edge(agent.name, related_agent, 
-                                     weight=0.5, chat_count=0, event_count=1, type='event')
+                if concept and concept.describe:
+                    # 显示前几个记忆的内容（调试用）
+                    if i < 3:
+                        original_text = concept.describe[:100]
+                        decoded_text = self.decode_text(concept.describe)[:100]
+                        print(f"\n事件记忆 {i+1}:")
+                        print(f"原始文本: {original_text}...")
+                        print(f"解码文本: {decoded_text}...")
+                    
+                    related_agents = self.extract_agents_from_text(concept.describe)
+                    event_agents_found.update(related_agents)
+                    
+                    # 显示提取到的Agent（调试用）
+                    if i < 3 and related_agents:
+                        print(f"提取到的Agent: {related_agents}")
+                    
+                    for related_agent in related_agents:
+                        if related_agent != agent.name:
+                            G.add_node(related_agent)
+                            if G.has_edge(agent.name, related_agent):
+                                G[agent.name][related_agent]['weight'] += 0.5  # 事件权重较低
+                                G[agent.name][related_agent]['event_count'] += 1
+                            else:
+                                G.add_edge(agent.name, related_agent, 
+                                         weight=0.5, chat_count=0, event_count=1, type='event')
             except Exception as e:
                 print(f"处理event节点 {event_node_id} 时出错: {e}")
                 continue
+        
+        # 调试信息：显示提取结果
+        all_agents_found = chat_agents_found.union(event_agents_found)
+        print(f"\n=== 提取结果统计 ===")
+        print(f"从对话记忆中提取到的Agent: {chat_agents_found}")
+        print(f"从事件记忆中提取到的Agent: {event_agents_found}")
+        print(f"总共提取到的Agent: {all_agents_found}")
+        print(f"认知图节点数: {G.number_of_nodes()}")
+        print(f"认知图边数: {G.number_of_edges()}")
         
         return G
 
