@@ -237,9 +237,13 @@ class OpenAILLMModel(LLMModel):
     @classmethod
     def support_model(cls, model):
         """检查此类是否支持指定的模型名称"""
-        # 更新以包含 gpt-4o-mini
-        # 如果需要，可以考虑更灵活的检查 (例如, model.startswith("gpt-"))
-        return model in ("gpt-4o-mini", "gpt-3.5-turbo", "text-embedding-3-small")
+        # 支持以下前缀的模型：
+        # - gpt- (OpenAI GPT系列模型)
+        # - qwen (阿里巴巴通义千问系列模型)
+        # - text- (OpenAI文本嵌入模型)
+        # - deepseek (DeepSeek系列模型)
+        supported_prefixes = ("gpt-", "qwen", "text-", "deepseek")
+        return any(model.startswith(prefix) for prefix in supported_prefixes)
 
     @classmethod
     def creatable(cls, keys, config):
