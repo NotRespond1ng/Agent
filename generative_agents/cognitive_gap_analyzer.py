@@ -167,6 +167,13 @@ class CognitiveGraphExtractor:
         
         print(f"\n=== {agent.name} 记忆分析 ===")
         
+        # 首先初始化Associate的memory字典，从docstore中获取所有节点
+        try:
+            self._initialize_agent_memory(agent)
+        except Exception as e:
+            print(f"初始化Agent记忆时出错: {e}")
+            print(f"错误详情: {traceback.format_exc()}")
+        
         # 获取LLM模型实例（如果agent有的话）
         llm_model = None
         try:
@@ -292,6 +299,37 @@ class CognitiveGraphExtractor:
         print(f"认知图边数: {G.number_of_edges()}")
         
         return G
+    
+    def _initialize_agent_memory(self, agent):
+        """初始化Agent的记忆字典，从docstore中获取所有节点ID并按类型分类"""
+        try:
+            # 获取所有节点
+            all_nodes = agent.associate._index.get_nodes()
+            print(f"从docstore中获取到 {len(all_nodes)} 个节点")
+            
+            # 按类型分类节点ID
+            memory_by_type = {"event": [], "thought": [], "chat": []}
+            
+            for node in all_nodes:
+                if hasattr(node, 'metadata') and 'node_type' in node.metadata:
+                    node_type = node.metadata['node_type']
+                    if node_type in memory_by_type:
+                        memory_by_type[node_type].append(node.id_)
+            
+            # 更新Associate的memory字典
+            agent.associate.memory = memory_by_type
+            
+            print(f"记忆分类统计:")
+            print(f"  对话记忆: {len(memory_by_type['chat'])} 个")
+            print(f"  事件记忆: {len(memory_by_type['event'])} 个")
+            print(f"  思考记忆: {len(memory_by_type['thought'])} 个")
+            
+        except Exception as e:
+            print(f"初始化记忆字典时出错: {e}")
+            print(f"错误详情: {traceback.format_exc()}")
+            # 如果失败，至少确保memory字典存在
+            if not hasattr(agent.associate, 'memory') or not agent.associate.memory:
+                agent.associate.memory = {"event": [], "thought": [], "chat": []}
 
 
 class RealWorldGraphExtractor:
@@ -354,6 +392,37 @@ class RealWorldGraphExtractor:
                     continue
         
         return G
+    
+    def _initialize_agent_memory(self, agent):
+        """初始化Agent的记忆字典，从docstore中获取所有节点ID并按类型分类"""
+        try:
+            # 获取所有节点
+            all_nodes = agent.associate._index.get_nodes()
+            print(f"从docstore中获取到 {len(all_nodes)} 个节点")
+            
+            # 按类型分类节点ID
+            memory_by_type = {"event": [], "thought": [], "chat": []}
+            
+            for node in all_nodes:
+                if hasattr(node, 'metadata') and 'node_type' in node.metadata:
+                    node_type = node.metadata['node_type']
+                    if node_type in memory_by_type:
+                        memory_by_type[node_type].append(node.id_)
+            
+            # 更新Associate的memory字典
+            agent.associate.memory = memory_by_type
+            
+            print(f"记忆分类统计:")
+            print(f"  对话记忆: {len(memory_by_type['chat'])} 个")
+            print(f"  事件记忆: {len(memory_by_type['event'])} 个")
+            print(f"  思考记忆: {len(memory_by_type['thought'])} 个")
+            
+        except Exception as e:
+            print(f"初始化记忆字典时出错: {e}")
+            print(f"错误详情: {traceback.format_exc()}")
+            # 如果失败，至少确保memory字典存在
+            if not hasattr(agent.associate, 'memory') or not agent.associate.memory:
+                agent.associate.memory = {"event": [], "thought": [], "chat": []}
 
 
 class GraphDifferenceCalculator:
