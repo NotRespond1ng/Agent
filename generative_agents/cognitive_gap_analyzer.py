@@ -200,7 +200,7 @@ class CognitiveGraphExtractor:
         for query in chat_queries:
             try:
                 # 使用Associate的向量检索功能
-                chat_nodes = agent.associate._retrieve_nodes('chat', query, top_k=10)
+                chat_nodes = agent.associate._retrieve_nodes('chat', query)
                 
                 for node in chat_nodes:
                     if hasattr(node, 'text') and node.text:
@@ -246,7 +246,7 @@ class CognitiveGraphExtractor:
         for query in event_queries:
             try:
                 # 使用Associate的向量检索功能
-                event_nodes = agent.associate._retrieve_nodes('event', query, top_k=10)
+                event_nodes = agent.associate._retrieve_nodes('event', query)
                 
                 for node in event_nodes:
                     if hasattr(node, 'text') and node.text:
