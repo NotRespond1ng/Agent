@@ -213,18 +213,18 @@ class CognitiveGraphExtractor:
                     if hasattr(node, 'describe') and node.describe:
                         chat_memories_count += 1
                         
-                        # 显示前几个记忆的内容（调试用）
-                        if chat_memories_count <= 3:
-                            original_text = node.describe[:100]
-                            decoded_text = self.decode_text(node.describe)[:100]
-                            print(f"\n对话记忆 {chat_memories_count} (查询: {query}):")
-                            print(f"原始文本: {original_text}...")
-                            print(f"解码文本: {decoded_text}...")
+                        # # 显示前几个记忆的内容（调试用）
+                        # if chat_memories_count <= 3:
+                        #     original_text = node.describe[:100]
+                        #     decoded_text = self.decode_text(node.describe)[:100]
+                        #     print(f"\n对话记忆 {chat_memories_count} (查询: {query}):")
+                        #     print(f"原始文本: {original_text}...")
+                        #     print(f"解码文本: {decoded_text}...")
                         
-                        print(f"  [extract_cognitive_graph] 正在分析文本 (来自 node ID: {getattr(node, 'node_id', '未知ID')}): '{node.describe[:100]}...'")
-                        other_agents = self.extract_agents_from_text(node.describe)
-                        print(f"  [extract_cognitive_graph] 从上述文本提取到的 other_agents: {other_agents}")
-                        chat_agents_found.update(other_agents)
+                        # print(f"  [extract_cognitive_graph] 正在分析文本 (来自 node ID: {getattr(node, 'node_id', '未知ID')}): '{node.describe[:100]}...'")
+                        # other_agents = self.extract_agents_from_text(node.describe)
+                        # print(f"  [extract_cognitive_graph] 从上述文本提取到的 other_agents: {other_agents}")
+                        # chat_agents_found.update(other_agents)
                         
                         # 显示提取到的Agent（调试用）
                         if chat_memories_count <= 3 and other_agents:
