@@ -195,18 +195,19 @@ class CognitiveGraphExtractor:
                 chat_nodes = agent.associate._retrieve_nodes('chat', query)
                 
                 for node in chat_nodes:
-                    if hasattr(node, 'text') and node.text:
+                    # Concept对象使用describe属性而不是text属性
+                    if hasattr(node, 'describe') and node.describe:
                         chat_memories_count += 1
                         
                         # 显示前几个记忆的内容（调试用）
                         if chat_memories_count <= 3:
-                            original_text = node.text[:100]
-                            decoded_text = self.decode_text(node.text)[:100]
+                            original_text = node.describe[:100]
+                            decoded_text = self.decode_text(node.describe)[:100]
                             print(f"\n对话记忆 {chat_memories_count} (查询: {query}):")
                             print(f"原始文本: {original_text}...")
                             print(f"解码文本: {decoded_text}...")
                         
-                        other_agents = self.extract_agents_from_text(node.text)
+                        other_agents = self.extract_agents_from_text(node.describe)
                         chat_agents_found.update(other_agents)
                         
                         # 显示提取到的Agent（调试用）
@@ -241,18 +242,19 @@ class CognitiveGraphExtractor:
                 event_nodes = agent.associate._retrieve_nodes('event', query)
                 
                 for node in event_nodes:
-                    if hasattr(node, 'text') and node.text:
+                    # Concept对象使用describe属性而不是text属性
+                    if hasattr(node, 'describe') and node.describe:
                         event_memories_count += 1
                         
                         # 显示前几个记忆的内容（调试用）
                         if event_memories_count <= 3:
-                            original_text = node.text[:100]
-                            decoded_text = self.decode_text(node.text)[:100]
+                            original_text = node.describe[:100]
+                            decoded_text = self.decode_text(node.describe)[:100]
                             print(f"\n事件记忆 {event_memories_count} (查询: {query}):")
                             print(f"原始文本: {original_text}...")
                             print(f"解码文本: {decoded_text}...")
                         
-                        related_agents = self.extract_agents_from_text(node.text)
+                        related_agents = self.extract_agents_from_text(node.describe)
                         event_agents_found.update(related_agents)
                         
                         # 显示提取到的Agent（调试用）
