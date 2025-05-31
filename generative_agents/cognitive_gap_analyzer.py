@@ -179,7 +179,7 @@ class CognitiveGraphExtractor:
         G = nx.Graph()
         G.add_node(agent.name)  # 添加自己作为中心节点
         
-        print(f"\n=== {agent.name} 记忆分析 ===")
+        # 开始记忆分析
         
         # 首先初始化Associate的memory字典，从docstore中获取所有节点
         try:
@@ -308,8 +308,6 @@ class CognitiveGraphExtractor:
     def _initialize_agent_memory(self, agent):
         """初始化Agent的记忆字典，从docstore中获取所有节点ID并按类型分类"""
         try:
-            print(f"\n=== 开始初始化 {agent.name} 的记忆 ===")
-            
             # 检查agent的记忆结构
             if not hasattr(agent, 'associate'):
                 print("错误: agent没有associate属性")
@@ -378,7 +376,7 @@ class CognitiveGraphExtractor:
                     print(f"✗ 存储路径不存在: {docstore_path}")
             
             print(f"最终获取到 {len(all_nodes)} 个节点")
-            print(f"=== {agent.name} 记忆初始化完成 ===\n")
+            # 记忆初始化完成
             
             # 按类型分类节点ID
             memory_by_type = {"event": [], "thought": [], "chat": []}
@@ -1511,10 +1509,9 @@ def main():
     if llm_model:
         print("✓ LLM增强分析已启用")
     else:
-        print("⚠ 未找到LLM模型，将使用传统分析方法")
+            print("⚠ 未找到LLM模型，将使用传统分析方法")
     
     # 6. 生成分析报告
-    print("\n正在生成认知差距分析报告...")
     report = analyzer.generate_gap_report()
     
     # 7. 显示结果
