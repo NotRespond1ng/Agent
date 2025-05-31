@@ -606,6 +606,7 @@ def load_agent_from_storage(agent_name: str, storage_path: str, config: Dict = N
                     "max_try": 5
                 },
                 "associate": {
+                    "path": os.path.join(storage_path, "associate"),
                     "embedding": {
                         "type": "openai",
                         "model": "text-embedding-3-small",
