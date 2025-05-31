@@ -115,28 +115,18 @@ class CognitiveGraphExtractor:
                     re.match(r'^[\u4e00-\u9fff\w]+$', name)):  # 只包含中文、字母、数字
                     agent_names.add(name)
             
-            print(f"LLM识别到的Agent名称: {agent_names}")
             return agent_names
             
         except Exception as e:
-            print(f"LLM识别Agent名称时出错: {e}，回退到正则表达式方法")
+            # 静默回退到正则表达式方法
             return self.extract_agents_with_regex(text)
     
     def extract_agents_from_known_list(self, text: str) -> Set[str]:
         """从已知agent列表中查找在文本中出现的agent名称（推荐方法）"""
         found_agents = set()
-        print(f"    [extract_agents_from_known_list] 检查文本: '{text[:100]}...'")
-        print(f"    [extract_agents_from_known_list] known_agents 列表: {self.known_agents}")
-        
         for agent_name_to_find in self.known_agents:
-            # print(f"        试图查找 '{agent_name_to_find}'...")  # 调试单个名称
-            if agent_name_to_find in text:  # 直接字符串包含检查
-                # 对中文名，这通常足够
-                # 可以添加更复杂的边界检查，但简单的 'in' 应该能工作
+            if agent_name_to_find in text:
                 found_agents.add(agent_name_to_find)
-                # print(f"        ✓ 找到 '{agent_name_to_find}' 通过 'in' 检查")
-            # else:
-                # print(f"        ✗ 未找到 '{agent_name_to_find}' 通过 'in' 检查")
         
         # 保留原有的边界检查逻辑作为备用
         for agent_name in self.known_agents:
@@ -151,7 +141,7 @@ class CognitiveGraphExtractor:
                 elif agent_name in text:  # 对于中文名称，边界检查可能不适用
                     found_agents.add(agent_name)
         
-        print(f"    [extract_agents_from_known_list] 从当前文本提取到的 agents: {found_agents}")
+        # 提取完成
         return found_agents
     
     def extract_agents_with_regex(self, text: str) -> Set[str]:
@@ -190,7 +180,7 @@ class CognitiveGraphExtractor:
         
         # 使用类级别的LLM模型实例进行分析
         if self.llm_model:
-            print(f"使用独立LLM模型进行分析: {type(self.llm_model)}")
+            # 使用LLM模型进行分析
         else:
             print(f"未提供LLM模型，将使用传统的正则表达式方法")
         
@@ -213,22 +203,8 @@ class CognitiveGraphExtractor:
                     if hasattr(node, 'describe') and node.describe:
                         chat_memories_count += 1
                         
-                        # # 显示前几个记忆的内容（调试用）
-                        # if chat_memories_count <= 3:
-                        #     original_text = node.describe[:100]
-                        #     decoded_text = self.decode_text(node.describe)[:100]
-                        #     print(f"\n对话记忆 {chat_memories_count} (查询: {query}):")
-                        #     print(f"原始文本: {original_text}...")
-                        #     print(f"解码文本: {decoded_text}...")
-                        
-                        # print(f"  [extract_cognitive_graph] 正在分析文本 (来自 node ID: {getattr(node, 'node_id', '未知ID')}): '{node.describe[:100]}...'")
-                        # other_agents = self.extract_agents_from_text(node.describe)
-                        # print(f"  [extract_cognitive_graph] 从上述文本提取到的 other_agents: {other_agents}")
-                        # chat_agents_found.update(other_agents)
-                        
-                        # 显示提取到的Agent（调试用）
-                        if chat_memories_count <= 3 and other_agents:
-                            print(f"提取到的Agent: {other_agents}")
+                        other_agents = self.extract_agents_from_text(node.describe)
+                        chat_agents_found.update(other_agents)
                         
                         for other_agent in other_agents:
                             if other_agent != agent.name:
@@ -240,7 +216,7 @@ class CognitiveGraphExtractor:
                                     G.add_edge(agent.name, other_agent, 
                                              weight=1, chat_count=1, event_count=0, type='chat')
             except Exception as e:
-                print(f"检索对话记忆时出错 (查询: {query}): {e}")
+                # 静默处理检索错误
                 continue
         
         # 使用向量检索获取事件相关的记忆
@@ -262,22 +238,8 @@ class CognitiveGraphExtractor:
                     if hasattr(node, 'describe') and node.describe:
                         event_memories_count += 1
                         
-                        # 显示前几个记忆的内容（调试用）
-                        if event_memories_count <= 3:
-                            original_text = node.describe[:100]
-                            decoded_text = self.decode_text(node.describe)[:100]
-                            print(f"\n事件记忆 {event_memories_count} (查询: {query}):")
-                            print(f"原始文本: {original_text}...")
-                            print(f"解码文本: {decoded_text}...")
-                        
-                        print(f"  [extract_cognitive_graph] 正在分析事件文本 (来自 node ID: {getattr(node, 'node_id', '未知ID')}): '{node.describe[:100]}...'")
                         related_agents = self.extract_agents_from_text(node.describe)
-                        print(f"  [extract_cognitive_graph] 从上述事件文本提取到的 related_agents: {related_agents}")
                         event_agents_found.update(related_agents)
-                        
-                        # 显示提取到的Agent（调试用）
-                        if event_memories_count <= 3 and related_agents:
-                            print(f"提取到的Agent: {related_agents}")
                         
                         for related_agent in related_agents:
                             if related_agent != agent.name:
@@ -396,9 +358,7 @@ class CognitiveGraphExtractor:
             agent.associate.memory = memory_by_type
             
             print(f"记忆分类统计:")
-            print(f"  对话记忆: {len(memory_by_type['chat'])} 个")
-            print(f"  事件记忆: {len(memory_by_type['event'])} 个")
-            print(f"  思考记忆: {len(memory_by_type['thought'])} 个")
+            # 记忆统计完成
             
         except Exception as e:
             print(f"初始化记忆字典时出错: {e}")
@@ -598,7 +558,7 @@ class GraphDifferenceCalculator:
             
             print(f"LLM响应长度: {len(response) if response else 0}")
             if response:
-                print(f"LLM响应前100字符: {response[:100]}")
+                # LLM响应已获取
             
             if not response:
                 return {'consistency_score': 0.0, 'analysis': 'LLM响应为空'}
@@ -721,7 +681,7 @@ class GraphDifferenceCalculator:
             
             print(f"LLM交互模式比较响应长度: {len(response) if response else 0}")
             if response:
-                print(f"LLM交互模式比较响应前100字符: {response[:100]}")
+                # LLM交互响应已获取
             
             if not response:
                 return {'pattern_similarity': 0.0, 'analysis': 'LLM响应为空'}
