@@ -1489,8 +1489,18 @@ def main():
     
     # 5. 加载对话数据并创建分析器
     conversation_path = f"results/checkpoints/{simulation_name}/conversation.json"
-    # 传递known_agents参数，避免使用LLM提取agent名称
-    analyzer = CognitiveWorldGapAnalyzer(agents=loaded_agents, llm_model=llm_model, known_agents=selected_agents)
+    
+    # 获取所有可能的Agent名称作为 known_agents
+    storage_dir = f"results/checkpoints/{simulation_name}/storage"
+    all_agents = []
+    if os.path.exists(storage_dir):
+        for item in os.listdir(storage_dir):
+            agent_path = os.path.join(storage_dir, item)
+            if os.path.isdir(agent_path):
+                all_agents.append(item)
+    
+    # 传递所有Agent名称作为known_agents参数，而不是只传递selected_agents
+    analyzer = CognitiveWorldGapAnalyzer(agents=loaded_agents, llm_model=llm_model, known_agents=all_agents)
     
     if not analyzer.load_conversation_data(conversation_path):
         print(f"加载对话数据失败: {conversation_path}")
