@@ -288,35 +288,77 @@ class CognitiveGraphExtractor:
     def _initialize_agent_memory(self, agent):
         """初始化Agent的记忆字典，从docstore中获取所有节点ID并按类型分类"""
         try:
+            print(f"\n=== 开始初始化 {agent.name} 的记忆 ===")
+            
+            # 检查agent的记忆结构
+            if not hasattr(agent, 'associate'):
+                print("错误: agent没有associate属性")
+                return []
+            
+            print(f"agent.associate类型: {type(agent.associate)}")
+            
+            if not hasattr(agent.associate, '_index'):
+                print("错误: agent.associate没有_index属性")
+                return []
+            
+            print(f"agent.associate._index类型: {type(agent.associate._index)}")
+            
+            # 检查索引的节点数量
+            index = agent.associate._index
+            if hasattr(index, 'nodes_num'):
+                print(f"索引报告的节点数量: {index.nodes_num}")
+            
             # 尝试不同的方法获取所有节点
             all_nodes = []
             
             # 方法1：尝试从docstore直接获取
-            if hasattr(agent.associate._index, '_index') and hasattr(agent.associate._index._index, 'docstore'):
-                docstore = agent.associate._index._index.docstore
-                if hasattr(docstore, 'docs') and docstore.docs:
-                    all_nodes = list(docstore.docs.values())
-                    print(f"从docstore.docs中获取到 {len(all_nodes)} 个节点")
+            if hasattr(index, '_index') and hasattr(index._index, 'docstore'):
+                try:
+                    docstore = index._index.docstore
+                    if hasattr(docstore, 'docs') and docstore.docs:
+                        all_nodes = list(docstore.docs.values())
+                        print(f"✓ 从docstore.docs中获取到 {len(all_nodes)} 个节点")
+                        
+                        # 显示前几个节点的信息
+                        for i, node in enumerate(list(all_nodes)[:3]):
+                            print(f"  节点{i+1}: ID={node.id_}, 文本长度={len(node.text) if hasattr(node, 'text') else 'N/A'}")
+                    else:
+                        print("✗ docstore.docs为空或不存在")
+                except Exception as e:
+                    print(f"✗ 从docstore获取节点失败: {e}")
             
             # 方法2：如果方法1失败，尝试get_nodes方法
-            if not all_nodes and hasattr(agent.associate._index, 'get_nodes'):
+            if not all_nodes and hasattr(index, 'get_nodes'):
                 try:
-                    all_nodes = agent.associate._index.get_nodes()
-                    print(f"从get_nodes()中获取到 {len(all_nodes)} 个节点")
+                    all_nodes = index.get_nodes()
+                    print(f"✓ 从get_nodes()中获取到 {len(all_nodes)} 个节点")
                 except Exception as e:
-                    print(f"get_nodes()调用失败: {e}")
+                    print(f"✗ get_nodes()调用失败: {e}")
             
-            # 方法3：如果前面都失败，尝试从_index.docstore获取
-            if not all_nodes and hasattr(agent.associate._index, '_index'):
-                try:
-                    index = agent.associate._index._index
-                    if hasattr(index, 'docstore') and hasattr(index.docstore, 'docs'):
-                        all_nodes = list(index.docstore.docs.values())
-                        print(f"从_index.docstore.docs中获取到 {len(all_nodes)} 个节点")
-                except Exception as e:
-                    print(f"从_index.docstore获取节点失败: {e}")
+            # 方法3：检查存储路径
+            if hasattr(index, '_path') and index._path:
+                import os
+                docstore_path = os.path.join(index._path, 'docstore.json')
+                if os.path.exists(docstore_path):
+                    print(f"✓ 存储路径存在: {docstore_path}")
+                    try:
+                        import json
+                        with open(docstore_path, 'r', encoding='utf-8') as f:
+                            docstore_data = json.load(f)
+                            if 'docstore/data' in docstore_data:
+                                stored_nodes = len(docstore_data['docstore/data'])
+                                print(f"  文件中存储的节点数: {stored_nodes}")
+                                
+                                # 如果内存中没有节点但文件中有，说明加载有问题
+                                if not all_nodes and stored_nodes > 0:
+                                    print(f"⚠️  警告: 文件中有{stored_nodes}个节点，但内存中为空，可能存在加载问题")
+                    except Exception as e:
+                        print(f"  读取存储文件失败: {e}")
+                else:
+                    print(f"✗ 存储路径不存在: {docstore_path}")
             
             print(f"最终获取到 {len(all_nodes)} 个节点")
+            print(f"=== {agent.name} 记忆初始化完成 ===\n")
             
             # 按类型分类节点ID
             memory_by_type = {"event": [], "thought": [], "chat": []}

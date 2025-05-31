@@ -136,7 +136,11 @@ class Associate:
         memory=None,
     ):
         self._index_config = {"embedding": embedding, "path": path}
+        print(f"正在初始化Associate，路径: {path}")
+        
+        # 初始化LlamaIndex
         self._index = LlamaIndex(**self._index_config)
+        print(f"LlamaIndex初始化完成，当前节点数: {self._index.nodes_num}")
         
         # 尝试从存储中恢复memory数据
         if memory is None and path and os.path.exists(path):
@@ -153,7 +157,15 @@ class Associate:
                     memory = {"event": [], "thought": [], "chat": []}
         
         self.memory = memory or {"event": [], "thought": [], "chat": []}
-        self.cleanup_index()
+        
+        # 在索引完全加载后再进行清理
+        print(f"索引加载完成后的节点数: {self._index.nodes_num}")
+        if self._index.nodes_num > 0:
+            print("执行索引清理...")
+            self.cleanup_index()
+            print(f"清理后的节点数: {self._index.nodes_num}")
+        else:
+            print("索引为空，跳过清理步骤")
         self.retention = retention
         self.max_memory = max_memory
         self.max_importance = max_importance
