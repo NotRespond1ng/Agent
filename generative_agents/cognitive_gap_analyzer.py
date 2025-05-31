@@ -422,6 +422,10 @@ class GraphDifferenceCalculator:
             return {'consistency_score': 0.0, 'analysis': '无LLM模型'}
         
         try:
+            print(f"开始LLM记忆一致性分析...")
+            print(f"Agent记忆数量: {len(agent_memories)}")
+            print(f"真实对话数量: {len(real_conversations)}")
+            
             # 构建分析提示词
             memories_text = "\n".join([f"记忆{i+1}: {mem[:200]}" for i, mem in enumerate(agent_memories[:5])])
             conversations_text = "\n".join([f"对话{i+1}: {conv[:200]}" for i, conv in enumerate(real_conversations[:5])])
@@ -446,8 +450,15 @@ class GraphDifferenceCalculator:
 一致性评分：[0.0-1.0]
 分析理由：[简要说明]"""
             
+            print(f"正在调用LLM模型进行分析...")
+            print(f"LLM模型类型: {type(self.llm_model)}")
+            
             # 调用LLM
             response = self.llm_model.completion(prompt, temperature=0.1)
+            
+            print(f"LLM响应长度: {len(response) if response else 0}")
+            if response:
+                print(f"LLM响应前100字符: {response[:100]}")
             
             if not response:
                 return {'consistency_score': 0.0, 'analysis': 'LLM响应为空'}
@@ -537,6 +548,10 @@ class GraphDifferenceCalculator:
             return {'pattern_similarity': 0.0, 'analysis': '无LLM模型'}
         
         try:
+            print(f"开始LLM交互模式比较分析...")
+            print(f"认知交互模式数量: {len(cognitive_interactions)}")
+            print(f"真实交互模式数量: {len(real_interactions)}")
+            
             # 构建交互模式描述
             cognitive_desc = self._describe_interaction_patterns(cognitive_interactions)
             real_desc = self._describe_interaction_patterns(real_interactions)
@@ -561,7 +576,12 @@ class GraphDifferenceCalculator:
 相似性评分：[0.0-1.0]
 分析理由：[简要说明]"""
             
+            print(f"正在调用LLM模型进行交互模式比较...")
             response = self.llm_model.completion(prompt, temperature=0.1)
+            
+            print(f"LLM交互模式比较响应长度: {len(response) if response else 0}")
+            if response:
+                print(f"LLM交互模式比较响应前100字符: {response[:100]}")
             
             if not response:
                 return {'pattern_similarity': 0.0, 'analysis': 'LLM响应为空'}
@@ -578,6 +598,23 @@ class GraphDifferenceCalculator:
         except Exception as e:
             print(f"LLM交互模式比较时出错: {e}")
             return {'pattern_similarity': 0.0, 'analysis': f'比较出错: {str(e)}'}
+    
+    def _extract_interaction_patterns(self, graph: nx.Graph) -> Dict:
+        """从图中提取交互模式"""
+        interactions = {}
+        
+        for edge in graph.edges(data=True):
+            node1, node2, data = edge
+            agent_pair = f"{node1}-{node2}"
+            
+            interactions[agent_pair] = {
+                'weight': data.get('weight', 1),
+                'chat_count': data.get('chat_count', 0),
+                'event_count': data.get('event_count', 0),
+                'interaction_type': data.get('type', 'unknown')
+            }
+        
+        return interactions
     
     def _describe_interaction_patterns(self, interactions: Dict) -> str:
         """描述交互模式"""
@@ -728,13 +765,41 @@ class CognitiveWorldGapAnalyzer:
         if self.llm_model:
             try:
                 # 分析记忆与真实对话的一致性
+                # 提取agent的记忆内容
+                agent_memories = []
+                if hasattr(agent, 'memory') and agent.memory:
+                    # 获取associative记忆
+                    if hasattr(agent.memory, 'associative') and agent.memory.associative:
+                        memories = agent.memory.associative.retrieve_relevant_memories(
+                            "对话 交流 聊天", k=10
+                        )
+                        agent_memories.extend([mem.description for mem in memories])
+                    
+                    # 获取event记忆
+                    if hasattr(agent.memory, 'event') and agent.memory.event:
+                        events = agent.memory.event.retrieve_relevant_memories(
+                            "对话 交流 聊天", k=10
+                        )
+                        agent_memories.extend([event.description for event in events])
+                
+                # 提取真实对话数据
+                real_conversations = []
+                if self.conversation_data and 'conversations' in self.conversation_data:
+                    for conv in self.conversation_data['conversations']:
+                        if agent_name in conv.get('participants', []):
+                            real_conversations.append(conv.get('content', ''))
+                
                 memory_consistency = self.diff_calculator.analyze_memory_reality_consistency_with_llm(
-                    agent, self.conversation_data
+                    agent_memories, real_conversations
                 )
                 
                 # 分析交互模式的相似性
+                # 从图中提取交互模式
+                cognitive_interactions = self.diff_calculator._extract_interaction_patterns(cognitive_graph)
+                real_interactions = self.diff_calculator._extract_interaction_patterns(real_subgraph)
+                
                 interaction_similarity = self.diff_calculator.compare_interaction_patterns_with_llm(
-                    cognitive_graph, real_subgraph
+                    cognitive_interactions, real_interactions
                 )
                 
                 llm_analysis = {
