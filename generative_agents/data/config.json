@@ -30,7 +30,7 @@
         }
     },
     "api_keys": {
-        "OPENAI_API_KEY": "sk-Vlr3Ie1XffJP1hFyPYH9op021Oa6y0tbRgU6HOIdpkUkFTJm",
+        "OPENAI_API_KEY": "",
         "QIANFAN_AK": "",
         "QIANFAN_SK": "",
         "SPARK_APPID": "",
