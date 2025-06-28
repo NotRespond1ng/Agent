@@ -31,7 +31,7 @@ class LlamaIndex:
             embed_model = OpenAIEmbedding(
                 model=embedding['model'],
                 api_base=embedding['base_url'],
-                api_key='sk-Vlr3Ie1XffJP1hFyPYH9op021Oa6y0tbRgU6HOIdpkUkFTJm'
+                api_key=''
             )
         else:
             raise NotImplementedError(
